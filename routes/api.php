@@ -40,6 +40,8 @@ Route::post('user/update', [UserController::class, 'update']);
 Route::get('user/delete/{id}', [UserController::class, 'delete']);
 Route::post('user/change-password', [UserController::class, 'changePassword']);
 Route::post('user/upload-img', [UserController::class, 'uploadAvatar']);
+
+// Admin routes
 Route::get('user/unblock/{id}', [UserController::class, 'unblock']);
 Route::get('user/ban/{id}', [UserController::class, 'ban']);
 Route::get('user/suspend/{id}', [UserController::class, 'suspend']);
@@ -408,6 +410,15 @@ Route::get('jobs/{job}', [JobController::class, 'show'])
         // Moves: held → disputed
         Route::post('/{escrowTransaction}/dispute', [EscrowTransactionController::class, 'dispute'])
             ->name('escrow.dispute');
+
+// Bank Routes
+Route::get('/bank-accounts',           [BankAccountController::class, 'index'])->name('bank-accounts.index');
+Route::get('/bank-accounts/create',    [BankAccountController::class, 'create'])->name('bank-accounts.create');
+Route::post('/bank-accounts',          [BankAccountController::class, 'store'])->name('bank-accounts.store');
+Route::get('/bank-accounts/{bankAccount}',       [BankAccountController::class, 'show'])->name('bank-accounts.show');
+Route::get('/bank-accounts/{bankAccount}/edit',  [BankAccountController::class, 'edit'])->name('bank-accounts.edit');
+Route::put('/bank-accounts/{bankAccount}',       [BankAccountController::class, 'update'])->name('bank-accounts.update');
+Route::delete('/bank-accounts/{bankAccount}',    [BankAccountController::class, 'destroy'])->name('bank-accounts.destroy');
 
 
 

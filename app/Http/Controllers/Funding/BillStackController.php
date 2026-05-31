@@ -74,7 +74,7 @@ class BillStackController extends Controller
                 "user_id"=>$user->id,
             ];
 
-            StaticVirtualAccountController::save($data);
+            $bank = StaticVirtualAccountController::save($data);
             return response()->json([
                 "status"=>"success",
                 //"data"=>$response['data'],
@@ -83,7 +83,8 @@ class BillStackController extends Controller
         }else{
             return response()->json([
                 "status"=>"error",
-                "message"=>"Permanent virtual account number not generated successfully"
+                "message"=>"Permanent virtual account number not generated successfully",
+                "account_details"=>$$bank
             ]);
         }
     }
@@ -152,7 +153,7 @@ class BillStackController extends Controller
     {
          //This verifies the webhook is sent from Billstack
               $secret_key = "Bill_Stack-SEC-KEY-1f3c6fd0ea70df03e0e94e2e3cf42483";
-             $md5_hash = md5($secret_key);
+             $md5_hash = md5(self::$secretKey);
              if(request()->header('x-wiaxy-signature') == $md5_hash){
                  $verified = true;
 

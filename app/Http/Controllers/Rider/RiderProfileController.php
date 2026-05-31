@@ -45,9 +45,9 @@ class RiderProfileController extends Controller
         }
 
         // ── Sorting ───────────────────────────────────────────────────────────
-        $sortBy       = $request->get('sort_by', 'created_at');
-        $sortOrder    = $request->get('sort_order', 'desc');
-        $allowedSorts = ['created_at', 'legal_name', 'total_trips', 'review_rank'];
+        $sortBy       =  $request->get('sort_by', 'created_at');
+        $sortOrder    =  $request->get('sort_order', 'desc');
+        $allowedSorts =  ['created_at', 'legal_name', 'total_trips', 'review_rank'];
 
         if (in_array($sortBy, $allowedSorts)) {
             $query->orderBy($sortBy, $sortOrder === 'asc' ? 'asc' : 'desc');
@@ -79,7 +79,7 @@ class RiderProfileController extends Controller
                                 Rule::unique('rider_profiles', 'nin')],
             'gender'        => ['required', 'string', Rule::in(['male', 'female', 'other'])],
             'state'         => ['required', 'string', 'max:100'],
-            'is_available'  => ['required', 'string', Rule::in(['yes', 'no'])],
+           // 'is_available'  => ['required', 'string', Rule::in(['yes', 'no'])],
             'mobility_type' => ['required', 'string', Rule::in(['bike', 'van'])],
             'plate_number'  => ['required', 'string', 'max:20',
                                 Rule::unique('rider_profiles', 'plate_number')],
@@ -100,6 +100,7 @@ class RiderProfileController extends Controller
         // Enforce safe server-side defaults — never trust client for these
         $data['status']      = 'inactive';
         $data['total_trips'] = '0';
+        $data['is_available'] ='no';
 
         $riderProfile = RiderProfile::create($data);
 
