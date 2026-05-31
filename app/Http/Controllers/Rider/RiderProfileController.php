@@ -67,7 +67,7 @@ class RiderProfileController extends Controller
     // POST /api/riders
     // =========================================================================
     public function store(Request $request): JsonResponse
-    {
+    {   return $request->all();
         $validator = Validator::make($request->all(), [
             'user_id'       => ['required', 'integer', 'exists:users,id',
                                 Rule::unique('rider_profiles', 'user_id')],
