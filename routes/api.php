@@ -83,9 +83,11 @@ Route::get('riders/available', [RiderProfileController::class, 'availableInZone'
     Route::post('riders', [RiderProfileController::class, 'store'])
          ->name('riders.store');
 
+      // View any single rider
+    Route::get('riders/{riderProfile}', [RiderProfileController::class, 'show']);
+
     // Update own profile fields + image
-    Route::put('riders/{riderProfile}', [RiderProfileController::class, 'update'])
-         ->name('riders.update');
+    Route::put('riders/{riderProfile}', [RiderProfileController::class, 'update']);
 
     // GPS ping — called frequently by mobile app
     Route::patch('riders/{riderProfile}/location', [RiderProfileController::class, 'updateLocation'])
@@ -133,9 +135,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('riders', [RiderProfileController::class, 'index'])
          ->name('riders.index');
 
-    // View any single rider
-    Route::get('riders/{riderProfile}', [RiderProfileController::class, 'show'])
-         ->name('riders.show');
+  
 
     // Set status: active | inactive | suspended | banned
     Route::patch('riders/{riderProfile}/status', [RiderProfileController::class, 'changeStatus'])
@@ -150,7 +150,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
          ->name('riders.reviewRank');
 
     // Hard delete + wipe image from storage
-    Route::delete('riders/{riderProfile}', [RiderProfileController::class, 'destroy'])
+    Route::delete('delete-riders/{riderProfile}', [RiderProfileController::class, 'destroy'])
          ->name('riders.destroy');
 
 });
