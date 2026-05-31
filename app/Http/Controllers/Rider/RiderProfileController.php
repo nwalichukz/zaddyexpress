@@ -66,8 +66,8 @@ class RiderProfileController extends Controller
     // STORE — Create a new rider profile
     // POST /api/riders
     // =========================================================================
-    public function store(Request $request)
-    {   return $request->all();
+    public function store(Request $request): JsonResponse
+    {
         $validator = Validator::make($request->all(), [
             'user_id'       => ['required', 'integer', 'exists:users,id',
                                 Rule::unique('rider_profiles', 'user_id')],
@@ -102,7 +102,7 @@ class RiderProfileController extends Controller
         $data['total_trips'] = '0';
         $data['is_available'] ='no';
 
-        $riderProfile = RiderProfile::create($request->all());
+        $riderProfile = RiderProfile::create($data);
 
         return response()->json([
             'success' => true,
