@@ -6,5 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RiderProfile extends Model
 {
-    //
+      protected $fillable = [
+        'user_id',
+    ];
 }
