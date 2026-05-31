@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('rider_profiles', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->string('sur_name');
-            $table->string('last_name');
-            $table->string('other_name')->nullable();
+             $table->string('legal_name');
+           // $table->string('sur_name');
+           // $table->string('last_name');
+           // $table->string('other_name')->nullable();
             $table->string('mobile_number');
             $table->string('service_zone');
             $table->string('nin');
