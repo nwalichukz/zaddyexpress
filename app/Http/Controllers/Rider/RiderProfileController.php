@@ -102,7 +102,7 @@ class RiderProfileController extends Controller
         $data['total_trips'] = '0';
         $data['is_available'] ='no';
 
-        $riderProfile = RiderProfile::create($request);
+        $riderProfile = RiderProfile::create($request->all());
 
         return response()->json([
             'success' => true,
