@@ -69,23 +69,21 @@ class RiderProfileController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_id'       => ['required', 'integer', 'exists:users,id',
-                                Rule::unique('rider_profiles', 'user_id')],
-            'legal_name'    => ['required', 'string', 'max:255'],
-            'mobile_number' => ['required', 'string', 'max:20',
-            'nin' => ['required', 'string', 'digits:11',
-                                Rule::unique('rider_profiles', 'mobile_number')],
-            'service_zone'  => ['required', 'string', 'max:255'],
-            'nin'           => ['nullable', 'string', 'max:11',
-                                Rule::unique('rider_profiles', 'nin')],
-            'gender'        => ['required', 'string', Rule::in(['male', 'female', 'other'])],
-            'state'         => ['required', 'string', 'max:100'],
-           // 'is_available'  => ['required', 'string', Rule::in(['yes', 'no'])],
-            'mobility_type' => ['required', 'string', Rule::in(['bike', 'van'])],
-            'plate_number'  => ['required', 'string', 'max:20',
-                                Rule::unique('rider_profiles', 'plate_number')],
-            'image'         => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-        ]);
+    'user_id'       => ['required', 'integer', 'exists:users,id',
+                        Rule::unique('rider_profiles', 'user_id')],
+    'legal_name'    => ['required', 'string', 'max:255'],
+    'mobile_number' => ['required', 'digits:11',
+                        Rule::unique('rider_profiles', 'mobile_number')],
+    'nin'           => ['required', 'digits:11',
+                        Rule::unique('rider_profiles', 'nin')],
+    'service_zone'  => ['required', 'string', 'max:255'],
+    'gender'        => ['required', 'string', Rule::in(['male', 'female', 'other'])],
+    'state'         => ['required', 'string', 'max:100'],
+    'mobility_type' => ['required', 'string', Rule::in(['bike', 'van'])],
+    'plate_number'  => ['required', 'string', 'max:20',
+                        Rule::unique('rider_profiles', 'plate_number')],
+    'image'         => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+]);
 
         if ($validator->fails()) {
             return $this->validationError($validator->errors());
