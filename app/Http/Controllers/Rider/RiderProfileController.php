@@ -73,6 +73,7 @@ class RiderProfileController extends Controller
                                 Rule::unique('rider_profiles', 'user_id')],
             'legal_name'    => ['required', 'string', 'max:255'],
             'mobile_number' => ['required', 'string', 'max:20',
+            'nin' => ['required', 'string', 'digits:11',
                                 Rule::unique('rider_profiles', 'mobile_number')],
             'service_zone'  => ['required', 'string', 'max:255'],
             'nin'           => ['nullable', 'string', 'max:11',
