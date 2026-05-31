@@ -66,7 +66,7 @@ class RiderProfileController extends Controller
     // STORE — Create a new rider profile
     // POST /api/riders
     // =========================================================================
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {   return $request->all();
         $validator = Validator::make($request->all(), [
             'user_id'       => ['required', 'integer', 'exists:users,id',
