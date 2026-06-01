@@ -118,7 +118,7 @@ class RiderProfileController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => $riderProfile->load('user:id,name,email'),
+            'data'    => $riderProfile->load('user:id,name,email')->paginate(14),
         ]);
     }
 

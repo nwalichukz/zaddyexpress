@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('user_profiles', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->string('sur_name');
-            $table->string('last_name');
+            $table->string('sur_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('other_name')->nullable();
-            $table->string('mobile_number');
-            $table->string('gender');
+            $table->string('mobile_number')->nullable();
+            $table->string('gender')->nullable();
             $table->timestamps();
         });
     }

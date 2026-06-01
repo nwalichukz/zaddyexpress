@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('nin');
             $table->string('gender');
             $table->string('state');
+            $table->string('latitude')->nullabel();
+            $table->string('longitude')->nullable( );
             $table->string('review_rank')->nullable();
             $table->string('is_available');
             $table->string('mobility_type'); // bike, van
@@ -37,7 +39,7 @@ return new class extends Migration
 
     }
 
-    /**
+    /** 
      * Reverse the migrations.
      */
     public function down(): void

@@ -75,16 +75,16 @@ Route::get('riders/available', [RiderProfileController::class, 'availableInZone'
 
 
     // Own profile
-    Route::get('rider/me', [RiderProfileController::class, 'myProfile']);
+    Route::get('rider/my-profile/{id}', [RiderProfileController::class, 'myProfile']);
 
     // Create profile (one per user — enforced in controller)
     Route::post('riders', [RiderProfileController::class, 'store']);
 
       // View any single rider
-    Route::get('riders/{riderProfile}', [RiderProfileController::class, 'show']);
+    Route::get('get-all-riders', [RiderProfileController::class, 'show']);
 
     // Update own profile fields + image
-    Route::put('riders/{riderProfile}', [RiderProfileController::class, 'update']);
+    Route::put('riders/update/{riderProfile}', [RiderProfileController::class, 'update']);
 
     // GPS ping — called frequently by mobile app
     Route::patch('riders/{riderProfile}/location', [RiderProfileController::class, 'updateLocation']);
