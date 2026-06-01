@@ -129,7 +129,7 @@ class RiderProfileController extends Controller
     public function myProfile(Request $request): JsonResponse
     {
         $profile = RiderProfile::with('user:id,name,email')
-                               ->where('user_id', $request->user()->id)
+                               ->where('id', $request['id'])
                                ->first();
 
         if (! $profile) {
