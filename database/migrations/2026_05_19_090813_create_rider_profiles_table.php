@@ -23,11 +23,14 @@ return new class extends Migration
             $table->string('nin');
             $table->string('gender');
             $table->string('state');
-            $table->string('latitude')->nullabel();
-            $table->string('longitude')->nullable( );
+             $table->string('current_latitude')->nullabel();
+            $table->string('current_longitude')->nullable( );
             $table->string('review_rank')->nullable();
             $table->string('is_available');
-            $table->string('mobility_type'); // bike, van
+            $table->string('mobility_type')->default('bike'); // bike, van
+            $table->string('mobility_brand')->nullable(); // honda, baja, carter
+            $table->string('mobility_model')->nullable(); //carter 100
+            $table->string('production_year')->nullable();
             $table->string('total_trips')->default('0');
             $table->string('current_lat')->nullable();
             $table->string('current_lng')->nullable();

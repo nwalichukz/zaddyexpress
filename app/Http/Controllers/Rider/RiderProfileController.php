@@ -200,8 +200,8 @@ class RiderProfileController extends Controller
     public function updateLocation(Request $request, RiderProfile $riderProfile): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'current_lat' => ['required', 'numeric', 'between:-90,90'],
-            'current_lng' => ['required', 'numeric', 'between:-180,180'],
+            'current_latitude' => $riderProfile->current_latitude,
+                'current_longitude' => $riderProfile->current_longitude,
         ]);
 
         if ($validator->fails()) {
@@ -209,18 +209,12 @@ class RiderProfileController extends Controller
         }
 
         $riderProfile->update([
-            'current_lat' => $request->current_lat,
-            'current_lng' => $request->current_lng,
+            'current_latitude' => $request->current_latitude,
+            'current_longitude' => $request->current_longitude,
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Location updated.',
-            'data'    => [
-                'current_lat' => $riderProfile->current_lat,
-                'current_lng' => $riderProfile->current_lng,
-                'updated_at'  => $riderProfile->updated_at,
-            ],
         ]);
     }
 
@@ -235,17 +229,25 @@ class RiderProfileController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Only active riders can change their availability.',
+                    'current_latitude' => ['required',
+
+                    'numeric', 'between:-90,90'],
+
+                  'current_longitude' => ['required', 'numeric', 'between:-180,180'],
             ], 403);
         }
 
         $newAvailability = $riderProfile->is_available === 'yes' ? 'no' : 'yes';
 
-        $riderProfile->update(['is_available' => $newAvailability]);
+        $riderProfile->update([
+            'is_available' => $newAvailability,
+            'current_latitude' => $request->current_latitude,
+            'current_longitude' => $request->current_longitude,
+            ]);
 
         return response()->json([
             'success'      => true,
-            'message'      => 'Availability updated.',
-            'is_available' => $newAvailability,
+            'message'      => 'Availability updated.',  
         ]);
     }
 
@@ -288,7 +290,7 @@ class RiderProfileController extends Controller
     // INCREMENT TRIPS — Called server-side after a trip completes
     // PATCH /api/riders/{riderProfile}/trips/increment
     // =========================================================================
-    public function incrementTrips(RiderProfile $riderProfile): JsonResponse
+    public static function incrementTrips(RiderProfile $riderProfile): JsonResponse
     {
         $riderProfile->increment('total_trips');
 
