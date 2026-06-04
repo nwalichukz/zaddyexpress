@@ -23,7 +23,8 @@ class AuthController extends Controller
             [
 
                 "password" => "required",
-                "email" =>"required|email"
+                "email" =>"required|email",
+                "user_type"=>"required"
 
             ]);
 
@@ -63,7 +64,8 @@ class AuthController extends Controller
             [
 
                 "password" => "required",
-                "email" =>"required|email"
+                "email" =>"required|email",
+                "user_type"=>"required"
 
             ]);
 
@@ -77,7 +79,7 @@ class AuthController extends Controller
         if (!$token) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Invalid user details',
+                'message' => 'Invalid Rider details',
                 ]);
         }
        // UserController::updateLastLogin(JWTAuth::user()->id);
