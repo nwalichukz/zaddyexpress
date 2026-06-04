@@ -223,7 +223,7 @@ class RiderProfileController extends Controller
     // TOGGLE AVAILABILITY — Rider goes online / offline
     // PATCH /api/riders/{riderProfile}/availability
     // =========================================================================
-    public function toggleAvailability(RiderProfile $riderProfile): JsonResponse
+    public function toggleAvailability(RiderProfile $riderProfile Request $request): JsonResponse
     {
         if ($riderProfile->status !== 'active') {
             return response()->json([
