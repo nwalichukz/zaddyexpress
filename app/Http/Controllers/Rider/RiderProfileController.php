@@ -219,38 +219,43 @@ class RiderProfileController extends Controller
     }
 
 
-    // =========================================================================
-    // TOGGLE AVAILABILITY — Rider goes online / offline
-    // PATCH /api/riders/{riderProfile}/availability
-    // =========================================================================
-    public function toggleAvailability(RiderProfile $riderProfile): JsonResponse
-    {
-        if ($riderProfile->status !== 'active') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Only active riders can change their availability.',
-                    'current_latitude' => ['required',
-
-                    'numeric', 'between:-90,90'],
-
-                  'current_longitude' => ['required', 'numeric', 'between:-180,180'],
-            ], 403);
-        }
-
-        $newAvailability = $riderProfile->is_available === 'yes' ? 'no' : 'yes';
-
-        $riderProfile->update([
-            'is_available' => $newAvailability,
-            'current_latitude' => $request->current_latitude,
-            'current_longitude' => $request->current_longitude,
-            ]);
-
+   // =========================================================================
+// TOGGLE AVAILABILITY — Rider goes online / offline
+// PATCH /api/riders/{riderProfile}/availability
+// =========================================================================
+public function toggleAvailability(Request $request, RiderProfile $riderProfile): JsonResponse
+{
+    if ($riderProfile->status !== 'active') {
         return response()->json([
-            'success'      => true,
-            'message'      => 'Availability updated.',  
-        ]);
+            'success' => false,
+            'message' => 'Only active riders can change their availability.',
+        ], 403);
     }
 
+    $validator = Validator::make($request->all(), [
+        'current_latitude'  => ['required', 'numeric', 'between:-90,90'],
+        'current_longitude' => ['required', 'numeric', 'between:-180,180'],
+    ]);
+
+    if ($validator->fails()) {
+        return $this->validationError($validator->errors());
+    }
+
+    $newAvailability = $riderProfile->is_available === 'yes' ? 'no' : 'yes';
+
+    $riderProfile->update([
+        'is_available'      => $newAvailability,
+        'current_latitude'  => $request->current_latitude,
+        'current_longitude' => $request->current_longitude,
+    ]);
+
+    return response()->json([
+        'success'      => true,
+        'message'      => 'Availability updated.',
+        'is_available' => $newAvailability,
+        'data'         => $riderProfile->fresh(),
+    ], 200);
+}
 
     // =========================================================================
     // CHANGE STATUS — Admin sets active / inactive / suspended / banned
