@@ -145,57 +145,82 @@ class JobController extends Controller
     // SHOW — View a single job
     // GET /api/jobs/{job}
     // =========================================================================
-    public function show(Job $job): JsonResponse
-    {
-        $job->load([
-            'user',
-            'applications' => function ($query) {
-                $query->with('user:id,name,email')
-                      ->latest();
-            },
-        ]);
- 
-        return response()->json([
-            'success' => true,
-            'data'    => $job,
-        ]);
-    }
- 
-    // =========================================================================
-    // MY JOBS — All jobs posted by the authenticated user
-    // GET /api/jobs/mine
-    // =========================================================================
- public function myJobs(Request $request): JsonResponse
+   public function myJobs(Request $request): JsonResponse
 {
-    // 1. Validate incoming request
+    // ── 1. Validate ──────────────────────────────────────────────
     $request->validate([
-        'user_id' => 'required|exists:users,id',
+        'user_id'  => 'required|exists:users,id',
     ]);
 
-    // 2. Find the user
+    // ── 2. Find user ─────────────────────────────────────────────
     $userProfile = User::findOrFail($request->user_id);
 
-    // 3. Build the query — fix: $request->filled() not $query->filled()
+    // ── 3. Base query ─────────────────────────────────────────────
     $query = Job::where('user_id', $userProfile->id)->with('user');
 
+    // ── 4. Optional filters ───────────────────────────────────────
+
+    // Filter by status
     if ($request->filled('status')) {
         $query->where('status', $request->status);
     }
 
-    // 4. Paginate
+    // Filter by price type (fixed / negotiable)
+    if ($request->filled('price_type')) {
+        $query->where('price_type', $request->price_type);
+    }
+
+    // Filter by mobility type
+    if ($request->filled('mobility_type_needed')) {
+        $query->where('mobility_type_needed', $request->mobility_type_needed);
+    }
+
+    // Filter by date range (posted_at)
+    if ($request->filled('from')) {
+        $query->whereDate('posted_at', '>=', $request->from);
+    }
+    if ($request->filled('to')) {
+        $query->whereDate('posted_at', '<=', $request->to);
+    }
+
+    // Only active (not expired) jobs
+    if ($request->boolean('active_only')) {
+        $query->where(function ($q) {
+            $q->whereNull('expires_at')
+              ->orWhere('expires_at', '>', now());
+        });
+    }
+
+    // ── 5. Paginate ───────────────────────────────────────────────
     $perPage = min((int) $request->get('per_page', 15), 50);
     $jobs    = $query->latest('posted_at')->paginate($perPage);
 
-    // 5. Summary — fix: consistent column name (user_id not user_profile_id)
+    // ── 6. Summary counts (single query) ──────────────────────────
+    $statusCounts = Job::where('user_id', $userProfile->id)
+        ->selectRaw('status, COUNT(*) as count')
+        ->groupBy('status')
+        ->pluck('count', 'status');
+
     $summary = [
-        'open'        => Job::where('user_id', $userProfile->id)->where('status', 'open')->count(),
-        'in_progress' => Job::where('user_id', $userProfile->id)->where('status', 'in_progress')->count(),
-        'completed'   => Job::where('user_id', $userProfile->id)->where('status', 'completed')->count(),
-        'cancelled'   => Job::where('user_id', $userProfile->id)->where('status', 'cancelled')->count(),
+        'total'       => Job::where('user_id', $userProfile->id)->count(),
+        'open'        => $statusCounts->get('open', 0),
+        'matched'     => $statusCounts->get('matched', 0),
+        'in_progress' => $statusCounts->get('in_progress', 0),
+        'completed'   => $statusCounts->get('completed', 0),
+        'cancelled'   => $statusCounts->get('cancelled', 0),
+        'expired'     => Job::where('user_id', $userProfile->id)
+                            ->whereNotNull('expires_at')
+                            ->where('expires_at', '<', now())
+                            ->count(),
     ];
 
+    // ── 7. Return ─────────────────────────────────────────────────
     return response()->json([
         'success' => true,
+        'user'    => [
+            'id'   => $userProfile->id,
+            'name' => $userProfile->name,
+        ],
         'summary' => $summary,
         'data'    => $jobs,
     ]);
