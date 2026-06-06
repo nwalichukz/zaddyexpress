@@ -146,7 +146,7 @@ class JobController extends Controller
     // GET /api/jobs/{job}
     // =========================================================================
    public function myJobs(Request $request): JsonResponse
-{
+{  return $request->all();
     // ── 1. Validate ──────────────────────────────────────────────
     $request->validate([
         'user_id'  => 'required|exists:users,id',
