@@ -148,7 +148,7 @@ class JobController extends Controller
     public function show(Job $job): JsonResponse
     {
         $job->load([
-            'user:id',
+            'user',
             'applications' => function ($query) {
                 $query->with('user:id,name,email')
                       ->latest();
