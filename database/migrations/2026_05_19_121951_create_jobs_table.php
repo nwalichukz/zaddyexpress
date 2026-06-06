@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_profile_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('pickup_address');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('mobility_type_needed')->nullable();
             $table->string('price')->nullable();
             $table->string('price_type')->default('fixed');//fixed, negotiable,
-            $table->string('status')->nullable(); //open, matched, in_progress, completed, cancelled
+             $table->string('status')->nullable(); //open, matched, in_progress, completed, cancelled
             $table->timestamp('posted_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamp('delivered_at')->nullable();

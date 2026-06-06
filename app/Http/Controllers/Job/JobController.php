@@ -13,7 +13,7 @@ use Carbon\Carbon;
 
 class JobController extends Controller
 {
-    // =========================================================================
+   // =====================================================================
     // INDEX — List all jobs (public with filters)
     // GET /api/jobs
     // Filters: ?status=open&mobility_type_needed=bike&price_type=fixed
@@ -21,7 +21,7 @@ class JobController extends Controller
     // =========================================================================
     public function index(Request $request): JsonResponse
     {
-        $query = Job::with('userProfile:id,sur_name,last_name,mobile_number');
+        $query = Job::with('user:id,sur_name,last_name,mobile_number');
  
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -101,7 +101,7 @@ class JobController extends Controller
         $validator = Validator::make($request->all(), [
             'user 
             _id'      => ['required', 'integer',
-                                       'exists:user_profiles,id'],
+                                       'exists:users,id'],
             'title'                => ['required', 'string', 'max:255'],
             'description'          => ['nullable', 'string', 'max:5000'],
             'pickup_address'       => ['required', 'string', 'max:500'],
@@ -125,12 +125,12 @@ class JobController extends Controller
         $data['posted_at']  = now();
  
         // Price must be provided when price_type is fixed
-        if (($data['price_type'] ?? 'fixed') === 'fixed' && empty($data['price'])) {
+        /*if (($data['price_type'] ?? 'fixed') === 'fixed' && empty($data['price'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'A price is required when price type is fixed.',
             ], 422);
-        }
+        }*/
  
         $job = Job::create($data);
  

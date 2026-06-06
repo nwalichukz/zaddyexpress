@@ -295,7 +295,7 @@ Route::get(
 // GET /api/jobs?sort_by=price&sort_order=asc
 
 
-    Route::get('jobs', [JobController::class, 'index']);
+Route::get('jobs', [JobController::class, 'index']);
      
  
 // View a single job with all its applications
@@ -313,7 +313,7 @@ Route::get('jobs/{job}', [JobController::class, 'show']);
  
     // Post a new job
     // POST /api/jobs
-    Route::post('jobs', [JobController::class, 'store']);
+    Route::post('job/create', [JobController::class, 'store']);
          
  
     // Edit an open job
