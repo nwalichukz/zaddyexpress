@@ -120,7 +120,7 @@ Route::get('riders/available', [RiderProfileController::class, 'availableInZone'
     // Update a guarantor
     // PUT /api/guarantors/1
     Route::put(
-        'guarantors/{guarantor}',
+        'guarantor/{guarantor}/update',
         [RiderGuarantorController::class, 'update']
     );
 
