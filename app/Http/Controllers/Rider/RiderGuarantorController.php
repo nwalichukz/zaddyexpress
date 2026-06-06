@@ -133,9 +133,8 @@ class RiderGuarantorController extends Controller
             'mobile_no' => ['sometimes', 'string', 'max:20',
                             Rule::unique('guarantors', 'mobile_no')
                                 ->ignore($guarantor->id)],
-            'nin'       => ['sometimes', 'string', 'max:11',
-                            Rule::unique('guarantors', 'nin')
-                                ->ignore($guarantor->id)],
+            'nin'       => ['sometimes', 'prohibited'],
+
             'image'     => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
 
