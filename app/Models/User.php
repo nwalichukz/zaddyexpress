@@ -61,4 +61,12 @@ class User extends Authenticatable implements JWTSubject
     public function setting(){
         return $this->hasMany('App\Models\Setting');
     }
+
+    /**
+     * Get the jobs belonging to the user.
+     */
+    public function jobs()
+    {
+        return $this->hasMany(Job::class);
+    }
 }

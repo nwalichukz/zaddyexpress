@@ -141,91 +141,22 @@ class JobController extends Controller
         ], 201);
     }
  
-    // =========================================================================
-    // SHOW — View a single job
-    // GET /api/jobs/{job}
-    // =========================================================================
-   public function myJobs(Request $request)
-{   // return $request->all();
-    // ── 1. Validate ──────────────────────────────────────────────
-    $request->validate([
-        'user_id'  => 'required|exists:users,id',
-    ]);
+   
+    /**
+     * Get all jobs for a specific user ID.
+     */
+    public function myJobs($userId)
+    {
+        // Query the Job model directly using the user_id column
+        $jobs = Job::where('user_id', $userId)
+                   ->orderBy('created_at', 'desc')
+                   ->get();
 
-    // ── 2. Find user ─────────────────────────────────────────────
-   // return $userProfile = User::findOrFail($request->user_id);
-
-    // ── 3. Base query ─────────────────────────────────────────────
-   return $query = Job::where('user_id', $request->user_id)->with('user');
-
-    // ── 4. Optional filters ───────────────────────────────────────
-
-    // Filter by status
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
+        return response()->json([
+            'success' => true,
+            'data' => $jobs
+        ]);
     }
-
-    // Filter by price type (fixed / negotiable)
-    if ($request->filled('price_type')) {
-        $query->where('price_type', $request->price_type);
-    }
-
-    // Filter by mobility type
-    if ($request->filled('mobility_type_needed')) {
-        $query->where('mobility_type_needed', $request->mobility_type_needed);
-    }
-
-    // Filter by date range (posted_at)
-    if ($request->filled('from')) {
-        $query->whereDate('posted_at', '>=', $request->from);
-    }
-    if ($request->filled('to')) {
-        $query->whereDate('posted_at', '<=', $request->to);
-    }
-
-    // Only active (not expired) jobs
-    if ($request->boolean('active_only')) {
-        $query->where(function ($q) {
-            $q->whereNull('expires_at')
-              ->orWhere('expires_at', '>', now());
-        });
-    }
-
-    // ── 5. Paginate ───────────────────────────────────────────────
-    $perPage = min((int) $request->get('per_page', 15), 50);
-    $jobs    = $query->latest('posted_at')->paginate($perPage);
-
-    // ── 6. Summary counts (single query) ──────────────────────────
-    $statusCounts = Job::where('user_id', $userProfile->id)
-        ->selectRaw('status, COUNT(*) as count')
-        ->groupBy('status')
-        ->pluck('count', 'status');
-
-    $summary = [
-        'total'       => Job::where('user_id', $userProfile->id)->count(),
-        'open'        => $statusCounts->get('open', 0),
-        'matched'     => $statusCounts->get('matched', 0),
-        'in_progress' => $statusCounts->get('in_progress', 0),
-        'completed'   => $statusCounts->get('completed', 0),
-        'cancelled'   => $statusCounts->get('cancelled', 0),
-        'expired'     => Job::where('user_id', $userProfile->id)
-                            ->whereNotNull('expires_at')
-                            ->where('expires_at', '<', now())
-                            ->count(),
-    ];
-
-    // ── 7. Return ─────────────────────────────────────────────────
-    return response()->json([
-        'success' => true,
-        'user'    => [
-            'id'   => $userProfile->id,
-            'name' => $userProfile->name,
-        ],
-        'summary' => $summary,
-        'data'    => $jobs,
-    ]);
-}
- 
     // =========================================================================
     // UPDATE — Edit a job (only while open)
     // PUT /api/jobs/{job}
