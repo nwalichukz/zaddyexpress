@@ -153,10 +153,10 @@ class JobController extends Controller
     ]);
 
     // ── 2. Find user ─────────────────────────────────────────────
-   return $userProfile = User::findOrFail($request->user_id);
+   // return $userProfile = User::findOrFail($request->user_id);
 
     // ── 3. Base query ─────────────────────────────────────────────
-    $query = Job::where('user_id', $userProfile->id)->with('user');
+   return $query = Job::where('user_id', $request->user_id)->with('user');
 
     // ── 4. Optional filters ───────────────────────────────────────
 
