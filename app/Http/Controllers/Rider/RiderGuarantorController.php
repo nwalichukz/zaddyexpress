@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
 
 class RiderGuarantorController extends Controller
 {
-    / =========================================================================
+    // =========================================================================
     // INDEX — List all guarantors (admin)
     // GET /api/guarantors
     // Optional filters: ?state=Lagos&rider_profile_id=5
