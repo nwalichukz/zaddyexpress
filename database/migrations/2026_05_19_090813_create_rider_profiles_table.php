@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('nin');
             $table->string('gender');
             $table->string('state');
-             $table->string('current_latitude')->nullabel();
+             $table->string('current_latitude')->nullable();
             $table->string('current_longitude')->nullable( );
             $table->string('review_rank')->nullable();
             $table->string('is_available');
