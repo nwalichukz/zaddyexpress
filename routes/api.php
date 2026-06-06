@@ -78,10 +78,10 @@ Route::get('riders/available', [RiderProfileController::class, 'availableInZone'
     Route::get('rider/my-profile/{id}', [RiderProfileController::class, 'myProfile']);
 
     // Create profile (one per user — enforced in controller)
-    Route::post('riders', [RiderProfileController::class, 'store']);
+    Route::post('riders/create', [RiderProfileController::class, 'store']);
 
       // View any single rider
-    Route::get('get-all-riders', [RiderProfileController::class, 'show']);
+   // Route::get('get-all-riders', [RiderProfileController::class, 'show']);
 
     // Update own profile fields + image
     Route::put('riders/update/{riderProfile}', [RiderProfileController::class, 'update']);
@@ -128,7 +128,7 @@ Route::get('riders/available', [RiderProfileController::class, 'availableInZone'
 // ── Admin Only ────────────────────────────────────────────────────────────────
 
     // List all riders (paginated, filterable, sortable)
-    Route::get('riders', [RiderProfileController::class, 'index']);
+    Route::get('all-riders', [RiderProfileController::class, 'index']);
       
 
   
