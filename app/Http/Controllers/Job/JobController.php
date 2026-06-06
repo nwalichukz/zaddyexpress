@@ -122,6 +122,7 @@ class JobController extends Controller
         $data               = $validator->validated();
         $data['status']     = 'open';
         $data['posted_at']  = now();
+        $data['expires_at'] = Carbon::now()->addMinutes(10); 
  
         // Price must be provided when price_type is fixed
         /*if (($data['price_type'] ?? 'fixed') === 'fixed' && empty($data['price'])) {
