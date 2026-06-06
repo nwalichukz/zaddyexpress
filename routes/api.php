@@ -308,7 +308,7 @@ Route::get('jobs/{job}', [JobController::class, 'show']);
     // View all jobs posted by the logged-in user
     // GET /api/jobs/mine
     // GET /api/jobs/mine?status=open
-    Route::get('jobs/mine/list', [JobController::class, 'myJobs']);
+    Route::post('jobs/mine/list', [JobController::class, 'myJobs']);
          
  
     // Post a new job
