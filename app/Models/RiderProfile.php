@@ -31,4 +31,13 @@ protected $fillable = [
         return $this->belongsTo(User::class);
     }
 
+
+      /**
+     * A rider profile belongs to a user
+     */
+    public function guarantors()
+    {
+        return $this->hasMany(Guarantor::class);
+    }
+
 }
