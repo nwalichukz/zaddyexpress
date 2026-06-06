@@ -51,6 +51,7 @@ class UserController extends Controller
         [
             "password" => "required|min:8",
             "name" => "required|min:3",
+             "mobile_number" => "required|digits:11",
             "email" =>"required|unique:users|email:rfc,dns",
         ]);
 

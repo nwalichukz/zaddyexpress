@@ -66,9 +66,9 @@ class RiderGuarantorController extends Controller
             'name'      => ['required', 'string', 'max:255'],
             'state'     => ['required', 'string', 'max:100'],
             'address'   => ['required', 'string', 'max:500'],
-            'mobile_no' => ['required', 'string', 'max:20',
+            'mobile_no' => ['required', 'string', 'digits:11',
                             Rule::unique('guarantors', 'mobile_no')],
-            'nin'       => ['required', 'string', 'max:11',
+            'nin'       => ['required', 'string', 'digits:11',
                             Rule::unique('guarantors', 'nin')],
             'image'     => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);

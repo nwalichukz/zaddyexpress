@@ -99,7 +99,8 @@ class JobController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'user_profile_id'      => ['required', 'integer',
+            'user 
+            _id'      => ['required', 'integer',
                                        'exists:user_profiles,id'],
             'title'                => ['required', 'string', 'max:255'],
             'description'          => ['nullable', 'string', 'max:5000'],
