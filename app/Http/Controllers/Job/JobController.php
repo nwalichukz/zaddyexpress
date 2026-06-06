@@ -145,7 +145,7 @@ class JobController extends Controller
     // SHOW — View a single job
     // GET /api/jobs/{job}
     // =========================================================================
-   public function myJobs(Request $request): JsonResponse
+   public function myJobs(Request $request)
 {   // return $request->all();
     // ── 1. Validate ──────────────────────────────────────────────
     $request->validate([
