@@ -165,42 +165,41 @@ class JobController extends Controller
     // MY JOBS — All jobs posted by the authenticated user
     // GET /api/jobs/mine
     // =========================================================================
-    public function myJobs(Request $request): JsonResponse
-    {
-        // Find the user_profile tied to the logged-in user
-        $userProfile = $request->user()
-                               ->userProfile;
- 
-        if (! $userProfile) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User profile not found. Please create a profile first.',
-            ], 404);
-        }
- 
-        $query = Job::where('user_profile_id', $userProfile->id)
-                    ->with('userProfile:id,sur_name,last_name');
- 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
- 
-        $perPage = min((int) $request->get('per_page', 15), 50);
-        $jobs    = $query->latest('posted_at')->paginate($perPage);
- 
-        $summary = [
-            'open'        => Job::where('user_profile_id', $userProfile->id)->where('status', 'open')->count(),
-            'in_progress' => Job::where('user_profile_id', $userProfile->id)->where('status', 'in_progress')->count(),
-            'completed'   => Job::where('user_profile_id', $userProfile->id)->where('status', 'completed')->count(),
-            'cancelled'   => Job::where('user_profile_id', $userProfile->id)->where('status', 'cancelled')->count(),
-        ];
- 
-        return response()->json([
-            'success' => true,
-            'summary' => $summary,
-            'data'    => $jobs,
-        ]);
+ public function myJobs(Request $request): JsonResponse
+{
+    // 1. Validate incoming request
+    $request->validate([
+        'user_id' => 'required|exists:users,id',
+    ]);
+
+    // 2. Find the user
+    $userProfile = User::findOrFail($request->user_id);
+
+    // 3. Build the query — fix: $request->filled() not $query->filled()
+    $query = Job::where('user_id', $userProfile->id)->with('user');
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
     }
+
+    // 4. Paginate
+    $perPage = min((int) $request->get('per_page', 15), 50);
+    $jobs    = $query->latest('posted_at')->paginate($perPage);
+
+    // 5. Summary — fix: consistent column name (user_id not user_profile_id)
+    $summary = [
+        'open'        => Job::where('user_id', $userProfile->id)->where('status', 'open')->count(),
+        'in_progress' => Job::where('user_id', $userProfile->id)->where('status', 'in_progress')->count(),
+        'completed'   => Job::where('user_id', $userProfile->id)->where('status', 'completed')->count(),
+        'cancelled'   => Job::where('user_id', $userProfile->id)->where('status', 'cancelled')->count(),
+    ];
+
+    return response()->json([
+        'success' => true,
+        'summary' => $summary,
+        'data'    => $jobs,
+    ]);
+}
  
     // =========================================================================
     // UPDATE — Edit a job (only while open)
