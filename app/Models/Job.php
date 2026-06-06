@@ -40,7 +40,7 @@ class Job extends Model
  
     // ── Relationships ─────────────────────────────────────────────────────────
  
-    public function userProfile(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
