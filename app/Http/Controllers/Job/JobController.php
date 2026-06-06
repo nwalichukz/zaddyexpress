@@ -150,7 +150,7 @@ class JobController extends Controller
         // Query the Job model directly using the user_id column
         $jobs = Job::where('user_id', $userId)
                    ->orderBy('created_at', 'desc')
-                   ->get();
+                   ->with('user')->get();
 
         return response()->json([
             'success' => true,
