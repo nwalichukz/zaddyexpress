@@ -146,14 +146,14 @@ class JobController extends Controller
     // GET /api/jobs/{job}
     // =========================================================================
    public function myJobs(Request $request): JsonResponse
-{  return $request->all();
+{   // return $request->all();
     // ── 1. Validate ──────────────────────────────────────────────
     $request->validate([
         'user_id'  => 'required|exists:users,id',
     ]);
 
     // ── 2. Find user ─────────────────────────────────────────────
-    $userProfile = User::findOrFail($request->user_id);
+   return $userProfile = User::findOrFail($request->user_id);
 
     // ── 3. Base query ─────────────────────────────────────────────
     $query = Job::where('user_id', $userProfile->id)->with('user');
