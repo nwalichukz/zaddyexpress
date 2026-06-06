@@ -13,7 +13,7 @@ class Job extends Model
      use HasFactory;
  
     protected $fillable = [
-        'user_profile_id',
+        'user_id',
         'title',
         'description',
         'pickup_address',
@@ -42,7 +42,7 @@ class Job extends Model
  
     public function userProfile(): BelongsTo
     {
-        return $this->belongsTo(UserProfile::class);
+        return $this->belongsTo(User::class);
     }
  
     public function applications(): HasMany
