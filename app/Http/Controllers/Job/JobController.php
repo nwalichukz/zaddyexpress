@@ -315,7 +315,7 @@ class JobController extends Controller
     {
         $userProfile = $job->user();
         // $isAdmin     = $request->user()->hasRole('admin');
-        $isOwner     = $userProfile && $job->user_id === $userProfile->id;
+        $isOwner     = $job->user_id === $userProfile->id;
  
         if (!$isOwner) {
             return response()->json([
@@ -339,6 +339,7 @@ class JobController extends Controller
             'data'    => $job->fresh(),
         ]);
     }
+
  
     // =========================================================================
     // EXTEND EXPIRY — Push the expiry date forward
