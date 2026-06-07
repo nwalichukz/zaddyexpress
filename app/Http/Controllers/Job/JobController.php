@@ -311,7 +311,7 @@ class JobController extends Controller
     // CANCEL — Owner cancels an open or matched job
     // PATCH /api/jobs/{job}/cancel
     // =========================================================================
-    public function cancel(Job $job): JsonResponse 
+    public function cancel(Job $job)
     {
        return $userProfile = $job->user();
         // $isAdmin     = $request->user()->hasRole('admin');
