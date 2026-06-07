@@ -205,7 +205,7 @@ class JobController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Job updated successfully.',
-            'data'    => $job->fresh('user '),
+            'data'    => $job->fresh('user'),
         ]);
     }
  
