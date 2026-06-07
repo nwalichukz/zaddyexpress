@@ -164,14 +164,14 @@ class JobController extends Controller
     public function update(Request $request, Job $job): JsonResponse
     {
         // Verify ownership via user_profile
-        $userProfile = $request->user()->userProfile;
+       /*  $userProfile = $request->user();
  
-        if (! $userProfile || $job->user_profile_id !== $userProfile->id) {
+        if (! $userProfile || $job->user _id !== $userProfile->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorised to edit this job.',
             ], 403);
-        }
+        }*/
  
         // Can only edit open jobs
         if ($job->status !== 'open') {
@@ -205,7 +205,7 @@ class JobController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Job updated successfully.',
-            'data'    => $job->fresh('userProfile:id,sur_name,last_name'),
+            'data'    => $job->fresh('user '),
         ]);
     }
  
@@ -216,7 +216,7 @@ class JobController extends Controller
     public function changeStatus(Request $request, Job $job): JsonResponse
     {
         $user        = $request->user();
-        $userProfile = $user->userProfile;
+        $userProfile = $user->user;
         $isAdmin     = $user->hasRole('admin');
         $isOwner     = $userProfile && $job->user_profile_id === $userProfile->id;
  
@@ -311,13 +311,13 @@ class JobController extends Controller
     // CANCEL — Owner cancels an open or matched job
     // PATCH /api/jobs/{job}/cancel
     // =========================================================================
-    public function cancel(Request $request, Job $job): JsonResponse
+    public function cancel(Job $job): JsonResponse 
     {
-        $userProfile = $request->user()->userProfile;
-        $isAdmin     = $request->user()->hasRole('admin');
-        $isOwner     = $userProfile && $job->user_profile_id === $userProfile->id;
+        $userProfile = $job->user();
+        // $isAdmin     = $request->user()->hasRole('admin');
+        $isOwner     = $userProfile && $job->user_id === $userProfile->id;
  
-        if (! $isAdmin && ! $isOwner) {
+        if (!$isOwner) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorised to cancel this job.',
@@ -346,9 +346,9 @@ class JobController extends Controller
     // =========================================================================
     public function extendExpiry(Request $request, Job $job): JsonResponse
     {
-        $userProfile = $request->user()->userProfile;
+        $userProfile = $request->user();
  
-        if (! $userProfile || $job->user_profile_id !== $userProfile->id) {
+        if (! $userProfile || $job->user_id !== $userProfile->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorised to extend this job.',

@@ -318,7 +318,7 @@ Route::get('jobs/{job}', [JobController::class, 'show']);
  
     // Edit an open job
     // PUT /api/jobs/5
-    Route::put('jobs/{job}', [JobController::class, 'update']);
+    Route::put('jobs/update/{job}', [JobController::class, 'update']);
         
  
     // Move job through status lifecycle (open → matched → in_progress → completed)
