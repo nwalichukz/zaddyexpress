@@ -313,7 +313,7 @@ class JobController extends Controller
     // =========================================================================
     public function cancel(Job $job): JsonResponse 
     {
-        $userProfile = $job->user();
+       return $userProfile = $job->user();
         // $isAdmin     = $request->user()->hasRole('admin');
         $isOwner     = $job->user_id === $userProfile->id;
  
