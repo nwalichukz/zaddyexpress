@@ -313,7 +313,7 @@ class JobController extends Controller
     // =========================================================================
     public function cancel(Job $job)
     {
-       return $userProfile = $job->user();
+      /* return $userProfile = $job->user();
         // $isAdmin     = $request->user()->hasRole('admin');
         $isOwner     = $job->user_id === $userProfile->id;
  
@@ -322,7 +322,7 @@ class JobController extends Controller
                 'success' => false,
                 'message' => 'You are not authorised to cancel this job.',
             ], 403);
-        }
+        } */
  
         if (in_array($job->status, ['completed', 'cancelled'])) {
             return response()->json([
