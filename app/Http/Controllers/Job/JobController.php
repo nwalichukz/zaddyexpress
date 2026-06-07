@@ -21,7 +21,7 @@ class JobController extends Controller
     // =========================================================================
     public function index(Request $request): JsonResponse
     {
-        $query = Job::with('user:id,sur_name,last_name,mobile_number');
+        $query = Job::with('user:id,name,email,mobile_number');
  
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -137,8 +137,19 @@ class JobController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Job posted successfully.',
-            'data'    => $job->load('userProfile:id,sur_name,last_name,mobile_number'),
+            'data'    => $job->load('user:id,name,email,mobile_number'),
         ], 201);
+    }
+
+    public function show(Job $job): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $job->load([
+                'user:id,name,email,mobile_number',
+                'applications.userRider:id,name,email,mobile_number',
+            ]),
+        ]);
     }
  
    
@@ -163,10 +174,7 @@ class JobController extends Controller
     // =========================================================================
     public function update(Request $request, Job $job): JsonResponse
     {
-        // Verify ownership via user_profile
-        $userProfile = $request->user()->userProfile;
- 
-        if (! $userProfile || $job->user_profile_id !== $userProfile->id) {
+        if (! $this->canManageJob($request, $job)) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorised to edit this job.',
@@ -205,7 +213,7 @@ class JobController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Job updated successfully.',
-            'data'    => $job->fresh('userProfile:id,sur_name,last_name'),
+            'data'    => $job->fresh('user:id,name,email,mobile_number'),
         ]);
     }
  
@@ -215,12 +223,7 @@ class JobController extends Controller
     // =========================================================================
     public function changeStatus(Request $request, Job $job): JsonResponse
     {
-        $user        = $request->user();
-        $userProfile = $user->userProfile;
-        $isAdmin     = $user->hasRole('admin');
-        $isOwner     = $userProfile && $job->user_profile_id === $userProfile->id;
- 
-        if (! $isAdmin && ! $isOwner) {
+        if (! $this->canManageJob($request, $job)) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorised to change the status of this job.',
@@ -278,9 +281,7 @@ class JobController extends Controller
     // =========================================================================
     public function markDelivered(Request $request, Job $job): JsonResponse
     {
-        $userProfile = $request->user()->userProfile;
- 
-        if (! $userProfile || $job->user_profile_id !== $userProfile->id) {
+        if (! $this->canManageJob($request, $job)) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorised to mark this job as delivered.',
@@ -313,11 +314,7 @@ class JobController extends Controller
     // =========================================================================
     public function cancel(Request $request, Job $job): JsonResponse
     {
-        $userProfile = $request->user()->userProfile;
-        $isAdmin     = $request->user()->hasRole('admin');
-        $isOwner     = $userProfile && $job->user_profile_id === $userProfile->id;
- 
-        if (! $isAdmin && ! $isOwner) {
+        if (! $this->canManageJob($request, $job)) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorised to cancel this job.',
@@ -346,9 +343,7 @@ class JobController extends Controller
     // =========================================================================
     public function extendExpiry(Request $request, Job $job): JsonResponse
     {
-        $userProfile = $request->user()->userProfile;
- 
-        if (! $userProfile || $job->user_profile_id !== $userProfile->id) {
+        if (! $this->canManageJob($request, $job)) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorised to extend this job.',
@@ -403,6 +398,13 @@ class JobController extends Controller
             'message' => 'Validation failed.',
             'errors'  => $errors,
         ], 422);
+    }
+
+    private function canManageJob(Request $request, Job $job): bool
+    {
+        $user = $request->user();
+
+        return $user && ($user->hasRole('admin') || (int) $job->user_id === (int) $user->id);
     }
 
 }

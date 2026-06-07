@@ -69,7 +69,7 @@ class UserWalletController extends Controller
             $credit->balance = $credit->balance + $request['amount'];
             $credit->save();
             // NewNotificationController::save($data);
-           return WalletTransaction::save($data);
+           return WalletTransactionController::save($data);
            // Mailer::creditMail($credit->user->email, $request['amount'], $credit->balance, $request['purpose']);
             //return $credit;
 
@@ -123,7 +123,7 @@ class UserWalletController extends Controller
                     $debit->balance = $debit->balance - $request['amount'];
                     $debit->save();
                     // NewNotificationController::save($data);
-                    return UserTransactionHistoryController::save($data);
+                    return WalletTransactionController::save($data);
                     //  Mailer::debitMail($debit->user->email, $request['amount'], $debit->balance, $request['purpose']);
                 }else{
                     return false;
@@ -287,7 +287,7 @@ class UserWalletController extends Controller
                             'purpose' => 'transfer',
                             'receiver_id' => $credit->user_id,
                         ];
-                        UserTransactionHistoryController::save($debit_transaction_record);
+                        WalletTransactionController::save($debit_transaction_record);
                     }
                     // $credit = Wallet::where('wallet_no', $request['receiver_wallet_no'])->with(['user'])->first();
                     $credit->balance = $credit->balance + $request['amount'];
@@ -298,7 +298,7 @@ class UserWalletController extends Controller
                         'transaction_type' => 'credit',
                         'purpose' => 'transfer',
                     ];
-                    UserTransactionHistoryController::save($credit_transaction_record);
+                    WalletTransactionController::save($credit_transaction_record);
                 });
 
                 return response()->json([
@@ -349,7 +349,7 @@ class UserWalletController extends Controller
                             'purpose' => 'transfer',
                             'receiver_id' => $credit->user_id,
                         ];
-                        UserTransactionHistoryController::save($debit_transaction_record);
+                        WalletTransactionController::save($debit_transaction_record);
                     }
                     // $credit = Wallet::where('wallet_no', $request['receiver_wallet_no'])->with(['user'])->first();
                     $credit->balance = $credit->balance + $request['amount'];

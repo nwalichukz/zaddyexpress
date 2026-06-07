@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Wallet\UserWalletController;
 use App\Http\Controllers\Funding\BillStackController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Image\ImageController;
 use App\Http\Controllers\Email\Mailer;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -14,6 +15,7 @@ use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use DB, Auth, Validator, Response, JWTAuth, Str;
 use Carbon\Carbon;
+use Exception;
 
 class UserController extends Controller
 {
@@ -30,6 +32,7 @@ class UserController extends Controller
         $save->password = Hash::make($request['password']);
         $save->status = 'active';
         $save->is_verified = 'yes';
+        $save->mobile_number = $request['mobile_number'] ?? null;
         $save->user_type = $request['user_type'];
         $save->save();
         // event(new UserSignUp($save));
@@ -52,14 +55,17 @@ class UserController extends Controller
             "password" => "required|min:8",
             "name" => "required|min:3",
              "mobile_number" => "required|digits:11",
-            "email" =>"required|unique:users|email:rfc,dns",
+            "user_type" => ["required", Rule::in(["user", "rider"])],
+            "email" =>"required|unique:users|email:rfc",
         ]);
 
     if($validation->fails()){
         return response()->json([
-            'status' => 403,
+            'success' => false,
+            'status' => 'error',
             'message' => $validation->errors(),
-        ]);
+            'errors' => $validation->errors(),
+        ], 422);
     }
 
     try{
@@ -77,11 +83,12 @@ class UserController extends Controller
         $login = AuthController::loginAtReg($request);
 
         return response()->json([
+            'success' => true,
             'status' =>'success',
             'message' => 'User created successfully.',
             'token' => $login['token'],
             'user' => $login['user']
-        ]);
+        ], 201);
 
 
     }catch(Exception $e){

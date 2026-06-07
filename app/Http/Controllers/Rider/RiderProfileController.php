@@ -118,7 +118,7 @@ class RiderProfileController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => $riderProfile->load('user:id,name,email')->paginate(14),
+            'data'    => $riderProfile->load('user:id,name,email'),
         ]);
     }
 
@@ -200,8 +200,8 @@ class RiderProfileController extends Controller
     public function updateLocation(Request $request, RiderProfile $riderProfile): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'current_latitude' => $riderProfile->current_latitude,
-                'current_longitude' => $riderProfile->current_longitude,
+            'current_latitude'  => ['required', 'numeric', 'between:-90,90'],
+            'current_longitude' => ['required', 'numeric', 'between:-180,180'],
         ]);
 
         if ($validator->fails()) {
@@ -215,6 +215,8 @@ class RiderProfileController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Location updated.',
+            'data' => $riderProfile->fresh(),
         ]);
     }
 

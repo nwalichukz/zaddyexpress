@@ -37,13 +37,15 @@ class AuthController extends Controller
 
         if (!$token) {
             return response()->json([
+                'success' => false,
                 'status' => 'error',
                 'message' => 'Invalid user details',
-                ]);
+                ], 401);
         }
        // UserController::updateLastLogin(JWTAuth::user()->id);
         $user = JWTAuth::user();
         return response()->json([
+            'success' => true,
             'status' => 'success',
             'token' => $token,
             'message' => 'Login Succesful',
@@ -78,13 +80,15 @@ class AuthController extends Controller
 
         if (!$token) {
             return response()->json([
+                'success' => false,
                 'status' => 'error',
                 'message' => 'Invalid Rider details',
-                ]);
+                ], 401);
         }
        // UserController::updateLastLogin(JWTAuth::user()->id);
         $user = JWTAuth::user();
         return response()->json([
+            'success' => true,
             'status' => 'success',
             'token' => $token,
             'message' => 'Login Succesful',
@@ -121,9 +125,23 @@ class AuthController extends Controller
     {
         JWTAuth::logout();
         return response()->json([
+            'success' => true,
             'status' => 'success',
             'message' => 'Successfully logged out',
         ]);
+    }
+
+    public function me()
+    {
+        return response()->json([
+            'success' => true,
+            'data' => JWTAuth::user()->load(['userwallet', 'userProfile', 'riderProfile']),
+        ]);
+    }
+
+    public function profile()
+    {
+        return $this->me();
     }
     
  //

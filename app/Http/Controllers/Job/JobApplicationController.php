@@ -21,7 +21,7 @@ class JobApplicationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = JobApplication::with([
-            'job:id,title,status,budget',
+            'job:id,title,status,price,user_id',
             'userRider:id,name,email',
         ]);
 
@@ -101,7 +101,7 @@ class JobApplicationController extends Controller
             'success' => true,
             'message' => 'Application submitted successfully.',
             'data'    => $application->load([
-                'job:id,title,status,budget',
+                'job:id,title,status,price,user_id',
                 'userRider:id,name,email',
             ]),
         ], 201);
@@ -130,7 +130,7 @@ class JobApplicationController extends Controller
         return response()->json([
             'success' => true,
             'data'    => $jobApplication->load([
-                'job:id,title,status,budget,user_id',
+                'job:id,title,status,price,user_id',
                 'userRider:id,name,email',
             ]),
         ]);
@@ -183,7 +183,7 @@ class JobApplicationController extends Controller
     // =========================================================================
     public function myApplications(Request $request): JsonResponse
     {
-        $query = JobApplication::with('job:id,title,status,budget')
+        $query = JobApplication::with('job:id,title,status,price,user_id')
                                ->where('user_rider_id', $request->user()->id);
 
         if ($request->filled('status')) {
@@ -236,7 +236,7 @@ class JobApplicationController extends Controller
             'success' => true,
             'message' => 'Application updated successfully.',
             'data'    => $jobApplication->fresh([
-                'job:id,title,status,budget',
+                'job:id,title,status,price,user_id',
                 'userRider:id,name,email',
             ]),
         ]);
