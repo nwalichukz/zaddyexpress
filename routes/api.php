@@ -61,7 +61,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('user/change-password', [UserController::class, 'changePassword']);
     Route::post('user/upload-img', [UserController::class, 'uploadAvatar']);
 
-    Route::get('rider/my-profile/{id}', [RiderProfileController::class, 'myProfile']);
+    Route::get('rider/my-profile/{id?}', [RiderProfileController::class, 'myProfile']);
     Route::post('riders/create', [RiderProfileController::class, 'store']);
     Route::put('riders/update/{riderProfile}', [RiderProfileController::class, 'update']);
     Route::patch('riders/{riderProfile}/location', [RiderProfileController::class, 'updateLocation']);

@@ -128,9 +128,17 @@ class RiderProfileController extends Controller
     // =========================================================================
     public function myProfile(Request $request): JsonResponse
     {
-        $profile = RiderProfile::with('user:id,name,email')
-                               ->where('id', $request['id'])
-                               ->first();
+        $routeId = $request->route('id');
+
+        $query = RiderProfile::with('user:id,name,email');
+
+        if ($routeId) {
+            $query->where('id', $routeId);
+        } else {
+            $query->where('user_id', $request->user()->id);
+        }
+
+        $profile = $query->first();
 
         if (! $profile) {
             return response()->json([
