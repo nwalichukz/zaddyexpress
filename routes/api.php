@@ -11,6 +11,7 @@ use App\Http\Controllers\Rider\RiderGuarantorController;
 use App\Http\Controllers\Rider\RiderProfileController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\UserProfile\UserProfileController;
+use App\Http\Controllers\Wallet\UserWalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('user/upload-img', [UserController::class, 'uploadAvatar']);
 
     Route::get('rider/my-profile/{id?}', [RiderProfileController::class, 'myProfile']);
+    Route::get('riders/by-user/{userId}', [RiderProfileController::class, 'byUser']);
     Route::post('riders/create', [RiderProfileController::class, 'store']);
     Route::put('riders/update/{riderProfile}', [RiderProfileController::class, 'update']);
     Route::patch('riders/{riderProfile}/location', [RiderProfileController::class, 'updateLocation']);
@@ -97,6 +99,9 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('jobs/{job}/deliver', [JobController::class, 'markDelivered']);
     Route::patch('jobs/{job}/cancel', [JobController::class, 'cancel']);
     Route::patch('jobs/{job}/extend', [JobController::class, 'extendExpiry']);
+
+    Route::get('wallet/me', [UserWalletController::class, 'myWallet']);
+    Route::get('wallet/transactions', [UserWalletController::class, 'myTransactions']);
 
     Route::apiResource('bank-accounts', BankAccountController::class)
         ->except(['create', 'edit'])

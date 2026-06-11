@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Wallet;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Models\UserWallet;
 use App\Models\WalletTransaction;
 use DB;
@@ -11,6 +12,45 @@ use DB;
 class UserWalletController extends Controller
 {
     public static $minimum_balance = 0;
+
+    /**
+     * MY WALLET — authenticated user's own wallet balance.
+     * GET /api/wallet/me
+     */
+    public function myWallet(Request $request): JsonResponse
+    {
+        $wallet = UserWallet::where('user_id', $request->user()->id)->first();
+
+        if (! $wallet) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Wallet not found for this account.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $wallet,
+        ]);
+    }
+
+    /**
+     * MY TRANSACTIONS — authenticated user's wallet transaction history.
+     * GET /api/wallet/transactions
+     */
+    public function myTransactions(Request $request): JsonResponse
+    {
+        $perPage = min((int) $request->get('per_page', 15), 100);
+
+        $transactions = WalletTransaction::where('user_id', $request->user()->id)
+                                          ->orderBy('created_at', 'desc')
+                                          ->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data'    => $transactions,
+        ]);
+    }
     /**
      * saves the data to  the db
      * this is the initialization process
@@ -406,7 +446,7 @@ class UserWalletController extends Controller
      *
      */
     public static function checkIfCanCashOut($user_id){
-        $balance = Wallet::where('user_id', $user_id)->first();
+        $balance = UserWallet::where('user_id', $user_id)->first();
         if($balance->balance >= self::$minimum_balance){
             return true;
         }else{
