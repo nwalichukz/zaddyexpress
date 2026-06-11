@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Job;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\AppNotification;
 use App\Models\Job;
 use App\Models\JobApplication;
 use Illuminate\Http\JsonResponse;
@@ -95,6 +96,16 @@ class JobApplicationController extends Controller
             'msg'           => $request->msg,
             'bid_price'     => $request->bid_price,
             'status'        => 'pending',
+        ]);
+
+        AppNotification::create([
+            'user_id' => $job->user_id,
+            'type' => 'application_received',
+            'payload' => [
+                'title' => 'New Application',
+                'body' => "A rider applied for your job \"{$job->title}\".",
+            ],
+            'is_read' => false,
         ]);
 
         return response()->json([
@@ -291,6 +302,20 @@ class JobApplicationController extends Controller
         $oldStatus = $jobApplication->status;
         $jobApplication->update(['status' => $request->status]);
 
+        if (in_array($request->status, ['accepted', 'rejected'])) {
+            AppNotification::create([
+                'user_id' => $jobApplication->user_rider_id,
+                'type' => $request->status === 'accepted' ? 'application_accepted' : 'application_rejected',
+                'payload' => [
+                    'title' => $request->status === 'accepted' ? 'Application Accepted' : 'Application Rejected',
+                    'body' => $request->status === 'accepted'
+                        ? "Your application for \"{$jobApplication->job->title}\" was accepted."
+                        : "Your application for \"{$jobApplication->job->title}\" was rejected.",
+                ],
+                'is_read' => false,
+            ]);
+        }
+
         return response()->json([
             'success' => true,
             'message' => "Application status changed from [{$oldStatus}] to [{$request->status}].",
@@ -319,6 +344,16 @@ class JobApplicationController extends Controller
         }
 
         $jobApplication->update(['status' => 'withdrawn']);
+
+        AppNotification::create([
+            'user_id' => $jobApplication->job->user_id,
+            'type' => 'application_withdrawn',
+            'payload' => [
+                'title' => 'Application Withdrawn',
+                'body' => "A rider withdrew their application for \"{$jobApplication->job->title}\".",
+            ],
+            'is_read' => false,
+        ]);
 
         return response()->json([
             'success' => true,

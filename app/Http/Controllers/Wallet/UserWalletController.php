@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Wallet;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Models\AppNotification;
 use App\Models\UserWallet;
 use App\Models\WalletTransaction;
 use DB;
@@ -114,6 +115,17 @@ class UserWalletController extends Controller
             //return $credit;
 
                });
+
+        AppNotification::create([
+            'user_id' => $request['user_id'],
+            'type' => 'wallet_credited',
+            'payload' => [
+                'title' => 'Wallet Credited',
+                'body' => "Your wallet was credited {$request['amount']} for {$request['purpose']}.",
+            ],
+            'is_read' => false,
+        ]);
+
           return $result;
 
     }
@@ -170,6 +182,18 @@ class UserWalletController extends Controller
                 }
 
             });
+
+           if ($result) {
+               AppNotification::create([
+                   'user_id' => $request['user_id'],
+                   'type' => 'wallet_debited',
+                   'payload' => [
+                       'title' => 'Wallet Debited',
+                       'body' => "Your wallet was debited {$request['amount']} for {$request['purpose']}.",
+                   ],
+                   'is_read' => false,
+               ]);
+           }
 
            return $result;
 
@@ -340,6 +364,26 @@ class UserWalletController extends Controller
                     ];
                     WalletTransactionController::save($credit_transaction_record);
                 });
+
+                AppNotification::create([
+                    'user_id' => $request['sender_user_id'],
+                    'type' => 'transfer_sent',
+                    'payload' => [
+                        'title' => 'Transfer Sent',
+                        'body' => "You sent {$request['amount']} to {$credit->user->first_name}.",
+                    ],
+                    'is_read' => false,
+                ]);
+
+                AppNotification::create([
+                    'user_id' => $credit->user_id,
+                    'type' => 'transfer_received',
+                    'payload' => [
+                        'title' => 'Transfer Received',
+                        'body' => "You received {$request['amount']}.",
+                    ],
+                    'is_read' => false,
+                ]);
 
                 return response()->json([
                     'status' => 'success',

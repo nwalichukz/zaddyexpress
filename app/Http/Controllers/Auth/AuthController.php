@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use App\Models\User;
 use App\Models\UserWallet;
 use JWTAuth, Validator;
@@ -145,6 +146,73 @@ class AuthController extends Controller
     }
     
  //
+
+    /**
+     * FORGOT PASSWORD — request a password reset token
+     * POST /api/auth/forgot-password
+     */
+    public function forgotPassword(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+
+        Password::sendResetLink($request->only('email'));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'If an account exists for this email, a reset code has been sent.',
+        ]);
+    }
+
+    /**
+     * RESET PASSWORD — reset a user's password using a token
+     * POST /api/auth/reset-password
+     */
+    public function resetPassword(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'token' => 'required|string',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $validation->errors(),
+            ], 422);
+        }
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->password = Hash::make($password);
+                $user->save();
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated. You can now log in.',
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => __($status),
+        ], 422);
+    }
 
     public function auth(Request $request)
                                      {

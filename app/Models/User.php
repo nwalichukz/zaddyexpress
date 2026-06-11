@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\MobileResetPasswordNotification;
 
 #[Fillable(['name', 'email', 'password', 'mobile_number', 'user_type', 'status', 'is_verified'])]
 #[Hidden(['password', 'remember_token'])]
@@ -32,6 +33,11 @@ class User extends Authenticatable implements JWTSubject
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new MobileResetPasswordNotification($token));
     }
 
      // Rest omitted for brevity

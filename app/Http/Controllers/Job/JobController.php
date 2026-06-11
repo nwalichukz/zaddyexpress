@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Job;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\AppNotification;
 use App\Models\Job;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -267,7 +268,17 @@ class JobController extends Controller
         }
  
         $job->update($updateData);
- 
+
+        AppNotification::create([
+            'user_id' => $job->user_id,
+            'type' => 'job_status_changed',
+            'payload' => [
+                'title' => 'Job Status Updated',
+                'body' => "Your job \"{$job->title}\" is now {$request->status}.",
+            ],
+            'is_read' => false,
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => "Job status changed from [{$currentStatus}] to [{$request->status}].",
@@ -299,7 +310,24 @@ class JobController extends Controller
             'status'       => 'completed',
             'delivered_at' => now(),
         ]);
- 
+
+        $notifyUserIds = [$job->user_id];
+        if ($job->acceptedApplication) {
+            $notifyUserIds[] = $job->acceptedApplication->user_rider_id;
+        }
+
+        foreach (array_unique($notifyUserIds) as $notifyUserId) {
+            AppNotification::create([
+                'user_id' => $notifyUserId,
+                'type' => 'job_delivered',
+                'payload' => [
+                    'title' => 'Job Delivered',
+                    'body' => "Job \"{$job->title}\" has been marked as delivered.",
+                ],
+                'is_read' => false,
+            ]);
+        }
+
         return response()->json([
             'success'      => true,
             'message'      => 'Job marked as delivered.',
@@ -329,7 +357,24 @@ class JobController extends Controller
         }
  
         $job->update(['status' => 'cancelled']);
- 
+
+        $notifyUserIds = [$job->user_id];
+        if ($job->acceptedApplication) {
+            $notifyUserIds[] = $job->acceptedApplication->user_rider_id;
+        }
+
+        foreach (array_unique($notifyUserIds) as $notifyUserId) {
+            AppNotification::create([
+                'user_id' => $notifyUserId,
+                'type' => 'job_cancelled',
+                'payload' => [
+                    'title' => 'Job Cancelled',
+                    'body' => "Job \"{$job->title}\" was cancelled.",
+                ],
+                'is_read' => false,
+            ]);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Job cancelled successfully.',

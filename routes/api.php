@@ -6,6 +6,7 @@ use App\Http\Controllers\BankAccount\BankAccountController;
 use App\Http\Controllers\Escrow\EscrowTransactionController;
 use App\Http\Controllers\Job\JobApplicationController;
 use App\Http\Controllers\Job\JobController;
+use App\Http\Controllers\Notification\AppNotificationController;
 use App\Http\Controllers\Review\ReviewController;
 use App\Http\Controllers\Rider\RiderGuarantorController;
 use App\Http\Controllers\Rider\RiderProfileController;
@@ -26,6 +27,8 @@ use App\Http\Controllers\Wallet\UserWalletController;
 Route::post('user/login', [AuthController::class, 'loginUser']);
 Route::post('rider/login', [AuthController::class, 'loginRider']);
 Route::post('user/create', [UserController::class, 'create']);
+Route::post('auth/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('auth/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::prefix('auth')->group(function () {
     Route::post('user/login', [AuthController::class, 'loginUser']);
@@ -102,6 +105,11 @@ Route::middleware('auth:api')->group(function () {
 
     Route::get('wallet/me', [UserWalletController::class, 'myWallet']);
     Route::get('wallet/transactions', [UserWalletController::class, 'myTransactions']);
+
+    Route::get('notifications', [AppNotificationController::class, 'index']);
+    Route::get('notifications/unread-count', [AppNotificationController::class, 'unreadCount']);
+    Route::patch('notifications/{notification}/read', [AppNotificationController::class, 'markAsRead']);
+    Route::post('notifications/read-all', [AppNotificationController::class, 'markAllAsRead']);
 
     Route::apiResource('bank-accounts', BankAccountController::class)
         ->except(['create', 'edit'])
