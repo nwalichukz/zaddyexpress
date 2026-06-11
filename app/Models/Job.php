@@ -40,10 +40,10 @@ class Job extends Model
  
     // ── Relationships ─────────────────────────────────────────────────────────
  
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+   public function user(): BelongsTo
+     {
+    return $this->belongsTo(User::class);
+         }
  
     public function applications(): HasMany
     {

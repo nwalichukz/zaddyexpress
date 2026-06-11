@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('status');
             $table->string('mobile_number')->nullable();
             $table->string('user_type'); // rider, user
+              $table->string('user_level')->default('user'); // rider, user
             $table->string('is_verified')->default('yes');
             $table->rememberToken();
             $table->timestamps();

@@ -53,6 +53,7 @@ class UserController extends Controller
     {    $validation = Validator::make($request->all(),
         [
             "password" => "required|min:8",
+            "user_level" => "forbidden",
             "name" => "required|min:3",
              "mobile_number" => "required|digits:11",
             "user_type" => ["required", Rule::in(["user", "rider"])],

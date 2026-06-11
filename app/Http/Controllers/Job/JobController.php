@@ -180,7 +180,7 @@ class JobController extends Controller
                 'success' => false,
                 'message' => 'You are not authorised to edit this job.',
             ], 403);
-        }
+        }*/
  
         // Can only edit open jobs
         if ($job->status !== 'open') {
@@ -340,14 +340,14 @@ class JobController extends Controller
     // CANCEL — Owner cancels an open or matched job
     // PATCH /api/jobs/{job}/cancel
     // =========================================================================
-    public function cancel(Request $request, Job $job): JsonResponse
+    public function cancel(Job $job)
     {
         if (! $this->canManageJob($request, $job)) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorised to cancel this job.',
             ], 403);
-        }
+        } */
  
         if (in_array($job->status, ['completed', 'cancelled'])) {
             return response()->json([
@@ -381,6 +381,7 @@ class JobController extends Controller
             'data'    => $job->fresh(),
         ]);
     }
+
  
     // =========================================================================
     // EXTEND EXPIRY — Push the expiry date forward
