@@ -12,14 +12,14 @@ class UserProfile extends Model
 
     protected $fillable = [
         'user_id',
-        'sur_name',
+        'last_name',
         'last_name',
         'other_name',
         'mobile_number',
         'gender',
     ];
 
-    // ── Relationships ─────────────────────────────────────────────────────────
+    // ── Relationships ─────────────────────────────────────────────────────────git
 
     public function user(): BelongsTo
     {
