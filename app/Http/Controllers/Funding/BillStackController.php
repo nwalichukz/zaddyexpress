@@ -12,9 +12,17 @@ use Validator, DB, Http;
 
 class BillStackController extends Controller
 {
-      public static $secretKey ="Bearer Bill_Stack-SEC-KEY-1f3c6fd0ea70df03e0e94e2e3cf42483";
+    private static function authorizationHeader(): string
+    {
+        $secret = (string) config('services.billstack.secret_key');
 
-     public static $baseUrl = "https://api.billstack.co/v2/thirdparty/generateVirtualAccount/";
+        return str_starts_with($secret, 'Bearer ') ? $secret : 'Bearer '.$secret;
+    }
+
+    private static function baseUrl(): string
+    {
+        return (string) config('services.billstack.base_url');
+    }
 
 
 
@@ -57,9 +65,9 @@ class BillStackController extends Controller
         ];
 
          $response = Http::withHeaders(['Content-Type' => 'application/json',
-                            'Authorization' => self::$secretKey])
+                            'Authorization' => self::authorizationHeader()])
                             ->post(
-                                self::$baseUrl,
+                                self::baseUrl(),
                                 $payload
                             );
         // return $payload;
@@ -84,7 +92,7 @@ class BillStackController extends Controller
             return response()->json([
                 "status"=>"error",
                 "message"=>"Permanent virtual account number not generated successfully",
-                "account_details"=>$$bank
+                "account_details"=>null
             ]);
         }
     }
@@ -117,9 +125,9 @@ class BillStackController extends Controller
         ];
 
          $response = Http::withHeaders(['Content-Type' => 'application/json',
-                            'Authorization' => self::$secretKey])
+                            'Authorization' => self::authorizationHeader()])
                             ->post(
-                                self::$baseUrl,
+                                self::baseUrl(),
                                 $payload
                             );
         // return $payload;
@@ -152,8 +160,8 @@ class BillStackController extends Controller
     public function webhook(Request $request)
     {
          //This verifies the webhook is sent from Billstack
-              $secret_key = "Bill_Stack-SEC-KEY-1f3c6fd0ea70df03e0e94e2e3cf42483";
-             $md5_hash = md5(self::$secretKey);
+              $secret_key = (string) config('services.billstack.secret_key');
+             $md5_hash = md5($secret_key);
              if(request()->header('x-wiaxy-signature') == $md5_hash){
                  $verified = true;
 
@@ -165,7 +173,7 @@ class BillStackController extends Controller
             // $verified = true;
 
         // if it is a charge event, verify and confirm it is a successful transaction
-        if($verified = true) {
+        if($verified === true) {
 
                     // process for successful charge
                     DB::transaction(function () use ($request) {

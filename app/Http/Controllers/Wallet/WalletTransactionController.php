@@ -16,7 +16,7 @@ class WalletTransactionController extends Controller
      *
      */
     public static function save(array $data){
-        $save = new UserTransactionHistory;
+        $save = new WalletTransaction;
          $save->user_id = $data['user_id'];
             $save->amount = $data['amount'];
             $save->transaction_type = $data['transaction_type'];
@@ -33,7 +33,7 @@ class WalletTransactionController extends Controller
      *
      */
     public static function getUserHistory($user_id){
-        return UserTransactionHistory::where('user_id', $user_id)->with('rechargeHistory')->orderBy('created_at', 'DESC')->simplePaginate(10);
+        return WalletTransaction::where('user_id', $user_id)->orderBy('created_at', 'DESC')->simplePaginate(10);
     }
 
 
@@ -45,9 +45,9 @@ class WalletTransactionController extends Controller
      */
     public static function getHistory($id = null){
         if(!empty($id)){
-            return $data = UserTransactionHistory::where('id', $id)->with(['user'])->orderBy('created_at', 'DESC')->first();
+            return $data = WalletTransaction::where('id', $id)->with(['user'])->orderBy('created_at', 'DESC')->first();
         }elseif(empty($id)){
-            return $data = UserTransactionHistory::where('id', '!=', null)->with(['user'])
+            return $data = WalletTransaction::where('id', '!=', null)->with(['user'])
                                               ->orderBy('created_at', 'DESC')->paginate(100);
         }else{
             return response()->json([
@@ -65,10 +65,10 @@ class WalletTransactionController extends Controller
      */
     public static function getFundingTransactions($user_id = null){
         if(!empty($user_id)){
-            return $data = UserTransactionHistory::where(['user_id'=>$user_id, 'purpose'=>'Funding of account'])
+            return $data = WalletTransaction::where(['user_id'=>$user_id, 'purpose'=>'Funding of account'])
                                                    ->with(['user'])->orderBy('created_at', 'DESC')->paginate(50);
         }elseif(empty($user_id)){
-            return $data = UserTransactionHistory::where(['purpose'=>'Funding of account'])->with(['user'])
+            return $data = WalletTransaction::where(['purpose'=>'Funding of account'])->with(['user'])
                 ->orderBy('created_at', 'DESC')->paginate(50);
         }else{
             return response()->json([
@@ -87,12 +87,12 @@ class WalletTransactionController extends Controller
      */
     public static function getUserTransactions($user_id = null){
         if(!empty($user_id)){
-            return $data = UserTransactionHistory::where(['user_id'=>$user_id])
+            return $data = WalletTransaction::where(['user_id'=>$user_id])
                 ->where('purpose', '!=', 'Funding of account')
-                ->with(['user', 'rechargeHistory'])->orderBy('created_at', 'DESC')->paginate(100);
+                ->with(['user'])->orderBy('created_at', 'DESC')->paginate(100);
         }elseif(empty($user_id)){
-            return $data = UserTransactionHistory::where('purpose', '!=', 'Funding of account')
-                ->with(['user', 'rechargeHistory'])
+            return $data = WalletTransaction::where('purpose', '!=', 'Funding of account')
+                ->with(['user'])
                 ->orderBy('created_at', 'DESC')->paginate(100);
         }else{
             return response()->json([
@@ -112,7 +112,7 @@ class WalletTransactionController extends Controller
      */
     public static function getCreditHistoryToday(){
         $today = Carbon::today();
-        return UserTransactionHistory::whereDate('created_at', $today)
+        return WalletTransaction::whereDate('created_at', $today)
             ->where('transaction_type', 'credit')
             ->sum('amount');
     }
@@ -125,7 +125,7 @@ class WalletTransactionController extends Controller
      */
     public static function getDebitHistoryToday(){
         $today = Carbon::today();
-        return UserTransactionHistory::whereDate('created_at', $today)
+        return WalletTransaction::whereDate('created_at', $today)
             ->where('transaction_type', 'debit')
             ->sum('amount');
     }
@@ -186,14 +186,14 @@ class WalletTransactionController extends Controller
             $date_label = 'This Year';
         }elseif ($duration == null) {
             $date_label = 'All time';
-            $transaction = UserTransactionHistory::whereNotNull('id')->get();
+            $transaction = WalletTransaction::whereNotNull('id')->get();
             return ['total_no'=>$transaction->count(),
                 'sum_total'=>$transaction->sum('amount'),
                 'date_label'=>$date_label,
             'date_label'=>$date_label??null];
         }
 
-        $transaction = UserTransactionHistory::whereDate('created_at', '>=', $duration)->get();
+        $transaction = WalletTransaction::whereDate('created_at', '>=', $duration)->get();
         return ['total_no'=>$transaction->count(),
             'sum_total'=>$transaction->sum('amount'),
             'date_label'=>$date_label??null,
@@ -208,7 +208,7 @@ class WalletTransactionController extends Controller
      */
     public static function getTotalHistoryToday(){
         $today = Carbon::today();
-        return UserTransactionHistory::whereDate('created_at', $today)
+        return WalletTransaction::whereDate('created_at', $today)
                                                       ->sum('amount');
     }
 
@@ -220,7 +220,7 @@ class WalletTransactionController extends Controller
     public static function getCreditHistoryThisWeek(){
         $now = Carbon::today();
         $weekstart = $now->startOfWeek();
-        return UserTransactionHistory::whereDate('created_at', '>=', $weekstart)
+        return WalletTransaction::whereDate('created_at', '>=', $weekstart)
             ->where('transaction_type', 'credit')
             ->sum('amount');
     }
@@ -232,7 +232,7 @@ class WalletTransactionController extends Controller
     public static function getDebitHistoryThisWeek(){
         $now = Carbon::today();
         $weekstart = $now->startOfWeek();
-        return UserTransactionHistory::whereDate('created_at', '>=', $weekstart)
+        return WalletTransaction::whereDate('created_at', '>=', $weekstart)
             ->where('transaction_type', 'debit')
             ->sum('amount');
     }
@@ -244,7 +244,7 @@ class WalletTransactionController extends Controller
     public static function getTotalHistoryThisWeek(){
         $now = Carbon::today();
         $weekstart = $now->startOfWeek();
-        return UserTransactionHistory::whereDate('created_at', '>=', $weekstart)
+        return WalletTransaction::whereDate('created_at', '>=', $weekstart)
                                                                   ->sum('amount');
     }
 
@@ -255,7 +255,7 @@ class WalletTransactionController extends Controller
     public static function getTotalHistoryThisMonth(){
         $now = Carbon::today();
         $monthstart = $now->startOfMonth();
-        return UserTransactionHistory::whereDate('created_at', '>=', $monthstart)
+        return WalletTransaction::whereDate('created_at', '>=', $monthstart)
                                                                   ->sum('amount');
     }
 
@@ -266,7 +266,7 @@ class WalletTransactionController extends Controller
     public static function getCreditHistoryThisMonth(){
         $now = Carbon::today();
         $monthstart = $now->startOfMonth();
-        return UserTransactionHistory::whereDate('created_at', '>=', $monthstart)
+        return WalletTransaction::whereDate('created_at', '>=', $monthstart)
             ->where('transaction_type', 'credit')
             ->sum('amount');
 
@@ -281,7 +281,7 @@ class WalletTransactionController extends Controller
     public static function getDebitHistoryThisMonth(){
         $now = Carbon::today();
         $monthstart = $now->startOfMonth();
-        $transaction = UserTransactionHistory::whereDate('created_at', '>=', $monthstart)
+        $transaction = WalletTransaction::whereDate('created_at', '>=', $monthstart)
             ->where('transaction_type', 'debit')->get();
         return ['total_no'=>$transaction->count(),
             'sum_total'=>$transaction->sum('amount')];
@@ -297,7 +297,7 @@ class WalletTransactionController extends Controller
     public static function getCreditHistoryThisYear (){
         $now = Carbon::today();
         $yearstart = $now->startOfYear();
-        $transaction = UserTransactionHistory::whereDate('created_at', '>=', $yearstart)
+        $transaction = WalletTransaction::whereDate('created_at', '>=', $yearstart)
             ->where('transaction_type', 'credit')->get();
         return ['total_no'=>$transaction->count(),
             'sum_total'=>$transaction->sum('amount')];
@@ -311,7 +311,7 @@ class WalletTransactionController extends Controller
     public static function getDebitHistoryThisYear (){
         $now = Carbon::today();
         $yearstart = $now->startOfYear();
-        $transaction = UserTransactionHistory::whereDate('created_at', '>=', $yearstart)
+        $transaction = WalletTransaction::whereDate('created_at', '>=', $yearstart)
             ->where('transaction_type', 'debit')->get();
         return ['total_no'=>$transaction->count(),
             'sum_total'=>$transaction->sum('amount')];
@@ -325,7 +325,7 @@ class WalletTransactionController extends Controller
     public static function getTotalHistoryThisYear (){
         $now = Carbon::today();
         $yearstart = $now->startOfYear();
-        $transaction = UserTransactionHistory::whereDate('created_at', '>=', $yearstart)->get();
+        $transaction = WalletTransaction::whereDate('created_at', '>=', $yearstart)->get();
         return ['total_no'=>$transaction->count(),
             'sum_total'=>$transaction->sum('amount')];
     }
@@ -337,7 +337,7 @@ class WalletTransactionController extends Controller
      */
     public static function getGrandTotal(){
 
-        $transaction = UserTransactionHistory::whereNotNull('id')->get();
+        $transaction = WalletTransaction::whereNotNull('id')->get();
         return ['total_no'=>$transaction->count(),
             'sum_total'=>$transaction->sum('amount')];
 
@@ -350,7 +350,7 @@ class WalletTransactionController extends Controller
      */
     public static function userGrandTotal($user_id){
 
-        return UserTransactionHistory::where('user_id', $user_id)->sum('amount');
+        return WalletTransaction::where('user_id', $user_id)->sum('amount');
       
     }
 }

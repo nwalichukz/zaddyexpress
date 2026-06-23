@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'billstack' => [
+        'secret_key' => env('BILLSTACK_SECRET_KEY'),
+        'base_url' => env('BILLSTACK_BASE_URL', 'https://api.billstack.co/v2/thirdparty/generateVirtualAccount/'),
+    ],
+
 ];

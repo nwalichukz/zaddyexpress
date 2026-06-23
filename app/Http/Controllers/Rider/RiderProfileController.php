@@ -118,7 +118,7 @@ class RiderProfileController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => $riderProfile->load('user:id,name,email')->paginate(14),
+            'data'    => $riderProfile->load('user:id,name,email'),
         ]);
     }
 
@@ -128,14 +128,47 @@ class RiderProfileController extends Controller
     // =========================================================================
     public function myProfile(Request $request): JsonResponse
     {
-        $profile = RiderProfile::with('user:id,name,email')
-                               ->where('id', $request['id'])
-                               ->first();
+        $routeId = $request->route('id');
+
+        $query = RiderProfile::with('user:id,name,email');
+
+        if ($routeId) {
+            $query->where('id', $routeId);
+        } else {
+            $query->where('user_id', $request->user()->id);
+        }
+
+        $profile = $query->first();
 
         if (! $profile) {
             return response()->json([
                 'success' => false,
                 'message' => 'Rider profile not found for this account.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $profile,
+        ]);
+    }
+
+    // =========================================================================
+    // BY USER — Look up a rider's profile by their user id (e.g. for a
+    // customer viewing the profile of a rider who applied to their job).
+    // Same field exposure as availableInZone — no ownership check.
+    // GET /api/riders/by-user/{userId}
+    // =========================================================================
+    public function byUser(Request $request, $userId): JsonResponse
+    {
+        $profile = RiderProfile::with('user:id,name,email')
+                                ->where('user_id', $userId)
+                                ->first();
+
+        if (! $profile) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Rider profile not found for this user.',
             ], 404);
         }
 
@@ -200,8 +233,8 @@ class RiderProfileController extends Controller
     public function updateLocation(Request $request, RiderProfile $riderProfile): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'current_latitude' => $riderProfile->current_latitude,
-                'current_longitude' => $riderProfile->current_longitude,
+            'current_latitude'  => ['required', 'numeric', 'between:-90,90'],
+            'current_longitude' => ['required', 'numeric', 'between:-180,180'],
         ]);
 
         if ($validator->fails()) {
@@ -215,6 +248,8 @@ class RiderProfileController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => 'Location updated.',
+            'data' => $riderProfile->fresh(),
         ]);
     }
 

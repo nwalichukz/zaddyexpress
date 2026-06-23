@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Wallet;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Models\AppNotification;
 use App\Models\UserWallet;
 use App\Models\WalletTransaction;
 use DB;
@@ -11,6 +13,45 @@ use DB;
 class UserWalletController extends Controller
 {
     public static $minimum_balance = 0;
+
+    /**
+     * MY WALLET — authenticated user's own wallet balance.
+     * GET /api/wallet/me
+     */
+    public function myWallet(Request $request): JsonResponse
+    {
+        $wallet = UserWallet::where('user_id', $request->user()->id)->first();
+
+        if (! $wallet) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Wallet not found for this account.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $wallet,
+        ]);
+    }
+
+    /**
+     * MY TRANSACTIONS — authenticated user's wallet transaction history.
+     * GET /api/wallet/transactions
+     */
+    public function myTransactions(Request $request): JsonResponse
+    {
+        $perPage = min((int) $request->get('per_page', 15), 100);
+
+        $transactions = WalletTransaction::where('user_id', $request->user()->id)
+                                          ->orderBy('created_at', 'desc')
+                                          ->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data'    => $transactions,
+        ]);
+    }
     /**
      * saves the data to  the db
      * this is the initialization process
@@ -69,11 +110,22 @@ class UserWalletController extends Controller
             $credit->balance = $credit->balance + $request['amount'];
             $credit->save();
             // NewNotificationController::save($data);
-           return WalletTransaction::save($data);
+           return WalletTransactionController::save($data);
            // Mailer::creditMail($credit->user->email, $request['amount'], $credit->balance, $request['purpose']);
             //return $credit;
 
                });
+
+        AppNotification::create([
+            'user_id' => $request['user_id'],
+            'type' => 'wallet_credited',
+            'payload' => [
+                'title' => 'Wallet Credited',
+                'body' => "Your wallet was credited {$request['amount']} for {$request['purpose']}.",
+            ],
+            'is_read' => false,
+        ]);
+
           return $result;
 
     }
@@ -123,13 +175,25 @@ class UserWalletController extends Controller
                     $debit->balance = $debit->balance - $request['amount'];
                     $debit->save();
                     // NewNotificationController::save($data);
-                    return UserTransactionHistoryController::save($data);
+                    return WalletTransactionController::save($data);
                     //  Mailer::debitMail($debit->user->email, $request['amount'], $debit->balance, $request['purpose']);
                 }else{
                     return false;
                 }
 
             });
+
+           if ($result) {
+               AppNotification::create([
+                   'user_id' => $request['user_id'],
+                   'type' => 'wallet_debited',
+                   'payload' => [
+                       'title' => 'Wallet Debited',
+                       'body' => "Your wallet was debited {$request['amount']} for {$request['purpose']}.",
+                   ],
+                   'is_read' => false,
+               ]);
+           }
 
            return $result;
 
@@ -287,7 +351,7 @@ class UserWalletController extends Controller
                             'purpose' => 'transfer',
                             'receiver_id' => $credit->user_id,
                         ];
-                        UserTransactionHistoryController::save($debit_transaction_record);
+                        WalletTransactionController::save($debit_transaction_record);
                     }
                     // $credit = Wallet::where('wallet_no', $request['receiver_wallet_no'])->with(['user'])->first();
                     $credit->balance = $credit->balance + $request['amount'];
@@ -298,8 +362,28 @@ class UserWalletController extends Controller
                         'transaction_type' => 'credit',
                         'purpose' => 'transfer',
                     ];
-                    UserTransactionHistoryController::save($credit_transaction_record);
+                    WalletTransactionController::save($credit_transaction_record);
                 });
+
+                AppNotification::create([
+                    'user_id' => $request['sender_user_id'],
+                    'type' => 'transfer_sent',
+                    'payload' => [
+                        'title' => 'Transfer Sent',
+                        'body' => "You sent {$request['amount']} to {$credit->user->first_name}.",
+                    ],
+                    'is_read' => false,
+                ]);
+
+                AppNotification::create([
+                    'user_id' => $credit->user_id,
+                    'type' => 'transfer_received',
+                    'payload' => [
+                        'title' => 'Transfer Received',
+                        'body' => "You received {$request['amount']}.",
+                    ],
+                    'is_read' => false,
+                ]);
 
                 return response()->json([
                     'status' => 'success',
@@ -349,7 +433,7 @@ class UserWalletController extends Controller
                             'purpose' => 'transfer',
                             'receiver_id' => $credit->user_id,
                         ];
-                        UserTransactionHistoryController::save($debit_transaction_record);
+                        WalletTransactionController::save($debit_transaction_record);
                     }
                     // $credit = Wallet::where('wallet_no', $request['receiver_wallet_no'])->with(['user'])->first();
                     $credit->balance = $credit->balance + $request['amount'];
@@ -406,7 +490,7 @@ class UserWalletController extends Controller
      *
      */
     public static function checkIfCanCashOut($user_id){
-        $balance = Wallet::where('user_id', $user_id)->first();
+        $balance = UserWallet::where('user_id', $user_id)->first();
         if($balance->balance >= self::$minimum_balance){
             return true;
         }else{
