@@ -56,7 +56,8 @@ class UserController extends Controller
         [
             "password" => "required|min:8",
             "user_level" => "forbidden",
-            "name" => "required|min:3",
+            "last_name" => "required|min:3",
+             "first_name" => "required|min:3",
              "mobile_number" => "required|digits:11",
             "user_type" => ["required", Rule::in(["user", "rider"])],
             "email" =>"required|unique:users|email:rfc",
