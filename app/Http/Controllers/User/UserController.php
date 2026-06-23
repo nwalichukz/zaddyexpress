@@ -25,8 +25,10 @@ class UserController extends Controller
     public static function save($request)
     {
         $save = new User;
-        $save->name = $request['name'];
+         $save->first_name = $request['first_name'];
+        $save->last_name = $request['last_name'];
         $save->email = $request['email'];
+        $save->phone_number = $request['mobile_number'];
         $save->password = Hash::make($request['password']);
         $save->status = 'active';
         $save->is_verified = 'yes';
