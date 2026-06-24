@@ -30,11 +30,10 @@ class UserController extends Controller
          $save->first_name = $request['first_name'];
         $save->last_name = $request['last_name'];
         $save->email = $request['email'];
-        $save->phone_number = $request['mobile_number'];
         $save->password = Hash::make($request['password']);
         $save->status = 'active';
         $save->is_verified = 'yes';
-        $save->mobile_number = $request['mobile_number'] ?? null;
+        $save->mobile_number = $request['mobile_number'];
         $save->user_type = $request['user_type'];
         $save->save();
         // event(new UserSignUp($save));
@@ -102,10 +101,7 @@ class UserController extends Controller
              ]);
 
         }
-        return Response()->json([
-            'status' =>'error',
-            'message' => 'Something went wrong, user not created successfully. Please try again'
-         ]);
+     
 
         //
     }
