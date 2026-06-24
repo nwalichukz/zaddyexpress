@@ -15,12 +15,23 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\MobileResetPasswordNotification;
 
-#[Fillable(['first_name', 'last_name', 'email', 'password', 'mobile_number', 'user_type', 'status', 'is_verified'])]
+#[Fillable([])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
+
+    protected $fillable = [
+        'first_name', 
+        'last_name',
+         'email', 
+         'password',
+          'mobile_number',
+           'user_type',
+            'status',
+             'is_verified'
+                  ];
 
     /**
      * Get the attributes that should be cast.
