@@ -15,8 +15,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\MobileResetPasswordNotification;
 
-#[Fillable([])]
-#[Hidden(['password', 'remember_token'])]
+//[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<UserFactory> */
