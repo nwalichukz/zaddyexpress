@@ -35,7 +35,7 @@ class JobItemController extends Controller
    public function create(Request $request)
       {          return 4568;
     // 1. Validate
-    $validator = Validator::make($request->all(), [
+   /* $validator = Validator::make($request->all(), [
        'items'                            => ['required', 'array', 'min:1'],
     
     // Existence and Basic Info
@@ -63,7 +63,7 @@ class JobItemController extends Controller
     // Status & Timestamps
     'items.*.status'                   => ['nullable', 'string', Rule::in(['open', 'matched', 'in_progress', 'completed', 'cancelled'])],
     'items.*.expires_at'               => ['nullable', 'date', 'after:now'],
-    ]);
+    ]);*/
 
     if ($validator->fails()) {
         return $this->validationError($validator->errors());
