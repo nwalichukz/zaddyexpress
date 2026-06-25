@@ -98,7 +98,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('my-jobs/{user_id}', [JobController::class, 'myJobs']);
 
  
-    Route::post('jobs/create', [JobItemController::class, 'create']);
+    Route::post('jobs/create', [JobController::class, 'create']);
+
+     Route::post('jobs/store', [JobItemController::class, 'createR']);
     Route::post('jobs', [JobController::class, 'store']);
     Route::put('jobs/{job}', [JobController::class, 'update']);
     Route::patch('jobs/{job}/status', [JobController::class, 'changeStatus']);
