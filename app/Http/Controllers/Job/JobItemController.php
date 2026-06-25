@@ -32,7 +32,7 @@ class JobItemController extends Controller
     // POST /job-items
     // =========================================================================
    public function store(Request $request): JsonResponse
-{
+{  return 4568;
     // 1. Validate
     $validator = Validator::make($request->all(), [
        'items'                            => ['required', 'array', 'min:1'],
