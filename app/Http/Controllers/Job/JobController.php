@@ -369,7 +369,7 @@ public function store(Request $request)
                 'success' => false,
                 'message' => 'You are not authorised to cancel this job.',
             ], 403);
-        } */
+        } 
  
         if (in_array($job->status, ['completed', 'cancelled'])) {
             return response()->json([
