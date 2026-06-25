@@ -35,7 +35,13 @@ class JobItemController extends Controller
     // STORE — Create a new job item
     // POST /job-items
     // =========================================================================
-   public function create(Request $request)
+
+    public function create(Request $request)
+      {
+         return "Working Now";
+      }
+
+   public function createR(Request $request)
       {          return 4568;
     // 1. Validate
     $validator = Validator::make($request->all(), [
