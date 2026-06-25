@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Job\JobController;
+use App\Models\Job; // Add this
+use Illuminate\Support\Facades\DB; // Add this
+use Carbon\Carbon;
 
 class JobItemController extends Controller
       {
@@ -35,7 +38,7 @@ class JobItemController extends Controller
    public function create(Request $request)
       {          return 4568;
     // 1. Validate
-   /* $validator = Validator::make($request->all(), [
+    $validator = Validator::make($request->all(), [
        'items'                            => ['required', 'array', 'min:1'],
     
     // Existence and Basic Info
@@ -105,7 +108,7 @@ class JobItemController extends Controller
         'success' => true,
         'message' => 'Job items created successfully.',
         'data'    => $createdItems,
-    ], 201);*/
+    ], 201);
 }
 
     // =========================================================================
