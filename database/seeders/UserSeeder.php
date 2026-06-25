@@ -14,22 +14,29 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create an admin user
+        // Create user
         User::create([
             'first_name' => 'Miracle',
             'last_name' => 'Obodoeze',
             'user_type' => 'user',
+            'status' => 'active',
+            'is_verified' => 'yes',
+            'mobile_number'=> '08065119492',
             'email' => 'lorduser@gmail.com',
             'password' => Hash::make('12345678'),
         ]);
-
-        // Create a test user
+        
+        // Create a rider
         User::create([
             'first_name' => 'Miracle',
             'last_name' => 'Obodoeze',
+            'status' => 'active',
+            'is_verified' => 'yes',
             'user_type' => 'rider',
+            'mobile_number'=> '07065119492',
             'email' => 'lordrider@gmail.com',
             'password' => Hash::make('12345678'),
         ]);
+
     }
 }
