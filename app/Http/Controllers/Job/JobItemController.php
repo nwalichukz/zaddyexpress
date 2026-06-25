@@ -63,7 +63,7 @@ class JobItemController extends Controller
     // Status & Timestamps
     'items.*.status'                   => ['nullable', 'string', Rule::in(['open', 'matched', 'in_progress', 'completed', 'cancelled'])],
     'items.*.expires_at'               => ['nullable', 'date', 'after:now'],
-    ]);*/
+    ]);
 
     if ($validator->fails()) {
         return $this->validationError($validator->errors());
@@ -105,7 +105,7 @@ class JobItemController extends Controller
         'success' => true,
         'message' => 'Job items created successfully.',
         'data'    => $createdItems,
-    ], 201);
+    ], 201);*/
 }
 
     // =========================================================================
