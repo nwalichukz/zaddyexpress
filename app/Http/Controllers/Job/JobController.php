@@ -93,54 +93,76 @@ class JobController extends Controller
         ]);
     }
  
-    // =========================================================================
-    // STORE — Post a new job
-    // POST /api/jobs
-    // =========================================================================
-    public function store(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-            'user_id'      => ['required', 'integer',
-                                       'exists:users,id'],
-            'title'                => ['required', 'string', 'max:255'],
-            'description'          => ['nullable', 'string', 'max:5000'],
-            'pickup_address'       => ['required', 'string', 'max:500'],
-            'pickup_lat'           => ['nullable', 'numeric', 'between:-90,90'],
-            'pickup_lng'           => ['nullable', 'numeric', 'between:-180,180'],
-            'dropoff_address'      => ['required', 'string', 'max:500'],
-            'mobility_type_needed' => ['nullable', 'string',
-                                       Rule::in(['bike', 'van'])],
-            'price'                => ['nullable', 'numeric', 'min:0'],
-            'price_type'           => ['sometimes', 'string',
-                                       Rule::in(['fixed', 'negotiable'])],
-            'expires_at'           => ['nullable', 'date', 'after:now'],
-        ]);
- 
-        if ($validator->fails()) {
-            return $this->validationError($validator->errors());
+
+
+public function store(Request $request)
+       {
+    $validated = $request->validate([
+        'jobs' => 'required|array|min:1',
+        'jobs.*.user_id' => 'required|numeric',
+        'jobs.*.title' => 'required|string|max:255',
+        'jobs.*.receiver_name' => 'nullable|string|max:255',
+        'jobs.*.description' => 'nullable|string',
+        'jobs.*.pickup_address' => 'required|string|max:255',
+        'jobs.*.pickup_lat' => 'nullable|numeric',
+        'jobs.*.pickup_lng' => 'nullable|numeric',
+        'jobs.*.dropoff_address' => 'required|string|max:255',
+        'jobs.*.dropoff_lat' => 'nullable|numeric',
+        'jobs.*.dropoff_lng' => 'nullable|numeric',
+        'jobs.*.mobility_type_needed' => 'nullable|string|max:255',
+        'jobs.*.price' => 'nullable|numeric',
+        'jobs.*.price_type' => 'nullable|in:fixed,negotiable',
+        'jobs.*.expires_at' => 'nullable|date',
+    ]);
+
+   // $userId = $request->user()->id; // or auth()->id()
+
+    $createdJobs = [];
+
+    DB::beginTransaction();
+
+    try {
+        foreach ($validated['jobs'] as $jobData) {
+            $job = Job::create([
+                'user_id'              => $jobData['user_id'],
+                'title'                 => $jobData['title'],
+                'receiver_name'         => $jobData['receiver_name'] ?? null,
+                'description'           => $jobData['description'] ?? null,
+                'pickup_address'        => $jobData['pickup_address'],
+                'pickup_lat'            => $jobData['pickup_lat'] ?? null,
+                'pickup_lng'            => $jobData['pickup_lng'] ?? null,
+                'dropoff_address'       => $jobData['dropoff_address'],
+                'dropoff_lat'           => $jobData['dropoff_lat'] ?? null,
+                'dropoff_lng'           => $jobData['dropoff_lng'] ?? null,
+                'mobility_type_needed'  => $jobData['mobility_type_needed'] ?? null,
+                'price'                 => $jobData['price'] ?? null,
+                'price_type'            => $jobData['price_type'] ?? 'fixed',
+                'status'                => 'open',
+                'posted_at'             => now(),
+                'expires_at'            => Carbon::now()->addMinutes(10),
+            ]);
+
+            $createdJobs[] = $job;
         }
- 
-        $data               = $validator->validated();
-        $data['status']     = 'open';
-        $data['posted_at']  = now();
-        $data['expires_at'] = Carbon::now()->addMinutes(10); 
- 
-        // Price must be provided when price_type is fixed
-        /*if (($data['price_type'] ?? 'fixed') === 'fixed' && empty($data['price'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'A price is required when price type is fixed.',
-            ], 422);
-        }*/
- 
-        $job = Job::create($data);
- 
+
+        DB::commit();
+    } catch (\Throwable $e) {
+        DB::rollBack();
+
         return response()->json([
-            'success' => true,
-            'message' => 'Job posted successfully.',
-            'data'    => $job->load('user:id,name,email,mobile_number'),
-        ], 201);
+            'success' => false,
+            'message' => 'Failed to create jobs.',
+            'error'   => $e->getMessage(),
+        ], 500);
     }
+
+    return response()->json([
+        'success' => true,
+        'message' => count($createdJobs) . ' job(s) created successfully.',
+        'data'    => $createdJobs,
+    ], 201);
+}
+
 
     public function show(Job $job): JsonResponse
     {

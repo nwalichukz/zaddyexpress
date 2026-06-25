@@ -19,6 +19,8 @@ class Job extends Model
         'pickup_address',
         'pickup_lat',
         'pickup_lng',
+        'dropoff_lat',
+        'dropoff_lng',
         'dropoff_address',
         'mobility_type_needed',
         'price',

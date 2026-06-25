@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->string('title');
+             $table->string('receiver_name')->nullable();
             $table->text('description')->nullable();
             $table->string('pickup_address');
             $table->string('pickup_lat')->nullable();
             $table->string('pickup_lng')->nullable();
+             $table->string('dropoff_lat')->nullable();
+            $table->string('dropoff_lng')->nullable();
             $table->string('dropoff_address');
             $table->string('mobility_type_needed')->nullable();
             $table->string('price')->nullable();
