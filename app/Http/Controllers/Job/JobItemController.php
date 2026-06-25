@@ -42,7 +42,7 @@ class JobItemController extends Controller
       }
 
    public function createR(Request $request)
-      {          return 4568;
+      {          //return 4568;
     // 1. Validate
     $validator = Validator::make($request->all(), [
        'items'                            => ['required', 'array', 'min:1'],
