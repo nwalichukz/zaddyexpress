@@ -89,12 +89,15 @@ class JobItemController extends Controller
         
         // Assuming JobController::store returns the ID or the created Model
         // Ensure JobController::store handles its own validation or request parsing
-        $jobId = JobController::store($request); 
+       // $jobId = JobController::store($request); 
+        $save = new Job;
+        $save->user_id = $request['user_id'];
+         $save->id;
         //$jobId = $job instanceof Job ? $job->id : $job;
 
         foreach ($validated['items'] as $itemData) {
             $createdItems[] = JobItem::create([
-                'job_id'               => $jobId,
+                'job_id'               => $save->id,
                 'title'                => $itemData['title'],
                 'receiver_name'        => $itemData['receiver_name'] ?? null,
                 'description'          => $itemData['description'] ?? null,
