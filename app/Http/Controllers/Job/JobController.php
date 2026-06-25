@@ -98,6 +98,7 @@ class JobController extends Controller
 public static function store($request)
 {      $save = new Job;
         $save->user_id = $request['user_id'];
+        $save->save();
         return $save->id;
 
 }
