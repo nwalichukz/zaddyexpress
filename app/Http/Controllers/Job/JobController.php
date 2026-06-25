@@ -97,7 +97,8 @@ class JobController extends Controller
 
 public function store(Request $request)
        {
-    $validated = $request->validate([
+
+    $validator = Validator::make($request->all(), [
         'jobs' => 'required|array|min:1',
         'jobs.*.user_id' => 'required|numeric',
         'jobs.*.title' => 'required|string|max:255',
@@ -114,6 +115,10 @@ public function store(Request $request)
         'jobs.*.price_type' => 'nullable|in:fixed,negotiable',
         'jobs.*.expires_at' => 'nullable|date',
     ]);
+
+    if ($validator->fails()) {
+            return $this->validationError($validator->errors());
+        }          
 
    // $userId = $request->user()->id; // or auth()->id()
 
@@ -161,7 +166,8 @@ public function store(Request $request)
         'message' => count($createdJobs) . ' job(s) created successfully.',
         'data'    => $createdJobs,
     ], 201);
-}
+   }
+
 
 
     public function show(Job $job): JsonResponse
@@ -173,6 +179,7 @@ public function store(Request $request)
                 'applications.userRider:id,name,email,mobile_number',
             ]),
         ]);
+
     }
  
    
