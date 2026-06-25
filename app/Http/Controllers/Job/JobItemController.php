@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\Http\Controllers\Job\Job Controller;
+use App\Http\Controllers\Job\JobController;
 
 class JobItemController extends Controller
       {
@@ -68,7 +68,7 @@ class JobItemController extends Controller
         return $this->validationError($validator->errors());
     }
 
-    $validated = $validator;
+    $validated = $validator->validated();
     $createdItems = [];
 
     // 2. Use a transaction to ensure all items are saved or none are

@@ -221,7 +221,9 @@ class UserController extends Controller
     $update = User::find($request['user_id']);
 
     if(!empty($request['name'])){
-    $update->name = $request['name'];
+    $update->first_name = $request['first_name'];
+     $update->last_name = $request['last_name'];
+     $update->mobile_number = $request['mobile_number'];
     }
 
     $saved = $update->save();

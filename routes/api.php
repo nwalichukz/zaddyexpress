@@ -6,6 +6,7 @@ use App\Http\Controllers\BankAccount\BankAccountController;
 use App\Http\Controllers\Escrow\EscrowTransactionController;
 use App\Http\Controllers\Job\JobApplicationController;
 use App\Http\Controllers\Job\JobController;
+use App\Http\Controllers\Job\JobItemController;
 use App\Http\Controllers\Notification\AppNotificationController;
 use App\Http\Controllers\Review\ReviewController;
 use App\Http\Controllers\Rider\RiderGuarantorController;
