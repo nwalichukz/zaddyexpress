@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Job;
 
+use App\Http\Controllers\Controller;
 use App\Models\JobItem;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
