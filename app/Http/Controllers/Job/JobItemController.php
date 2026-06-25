@@ -64,12 +64,11 @@ class JobItemController extends Controller
     'items.*.expires_at'               => ['nullable', 'date', 'after:now'],
     ]);
 
-
     if ($validator->fails()) {
         return $this->validationError($validator->errors());
     }
 
-    $validated = $validator->validated();
+    $validated = $validator;
     $createdItems = [];
 
     // 2. Use a transaction to ensure all items are saved or none are
