@@ -48,7 +48,7 @@ class JobItemController extends Controller
        'items'                            => ['required', 'array', 'min:1'],
     
     // Existence and Basic Info
-    'items.*.job_id'                   => ['required', 'integer', 'exists:jobs,id'],
+    //'items.*.job_id'                   => ['required', 'integer', 'exists:jobs,id'],
     'items.*.title'                    => ['required', 'string', 'max:255'],
     'items.*.receiver_name'            => ['nullable', 'string', 'max:255'],
     'items.*.description'              => ['nullable', 'string', 'max:5000'],
