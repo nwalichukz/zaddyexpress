@@ -36,12 +36,9 @@ class JobItemController extends Controller
     // POST /job-items
     // =========================================================================
 
-    public function create(Request $request)
-      {
-         return "Working Now";
-      }
+  
 
-   public function createR(Request $request)
+   public function create(Request $request)
       {          //return 4568;
     // 1. Validate
     $validator = Validator::make($request->all(), [
@@ -90,7 +87,7 @@ class JobItemController extends Controller
         // Assuming JobController::store returns the ID or the created Model
         // Ensure JobController::store handles its own validation or request parsing
         $jobId = JobController::store($request); 
-        
+
         //$jobId = $job instanceof Job ? $job->id : $job;
 
         foreach ($validated['items'] as $itemData) {

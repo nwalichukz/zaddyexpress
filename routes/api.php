@@ -46,7 +46,7 @@ Route::get('reviews', [ReviewController::class, 'index']);
 Route::get('jobs', [JobController::class, 'index']);
 Route::get('jobs/{job}', [JobController::class, 'show']);
 
- Route::post('jobs/store', [JobItemController::class, 'createR']);
+ Route::post('jobs/store', [JobItemController::class, 'create']);
 
 /*
 |--------------------------------------------------------------------------
