@@ -75,7 +75,10 @@ class JobItemController extends Controller
     ]);
 
     if ($validator->fails()) {
-        return $this->validationError($validator->errors());
+        return response()->json([
+            'status' => 403,
+            'message' => $validation->errors(),
+        ]);
     }
 
     $validated = $validator->validated();
