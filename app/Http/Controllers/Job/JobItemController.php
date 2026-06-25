@@ -32,8 +32,8 @@ class JobItemController extends Controller
     // STORE — Create a new job item
     // POST /job-items
     // =========================================================================
-   public function store(Request $request): JsonResponse
-{  return 4568;
+   public function create(Request $request)
+      {          return 4568;
     // 1. Validate
     $validator = Validator::make($request->all(), [
        'items'                            => ['required', 'array', 'min:1'],
