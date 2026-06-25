@@ -202,7 +202,7 @@ public function store(Request $request)
                 'success' => false,
                 'message' => 'You are not authorised to edit this job.',
             ], 403);
-        }*/
+        }
  
         // Can only edit open jobs
         if ($job->status !== 'open') {
