@@ -95,79 +95,12 @@ class JobController extends Controller
  
 
 
-public function store(Request $request)
-       {
+public function store($request)
+{     $save = new Job;
+        $save->user_id = $request['user_id'];
+        return $save->id;
 
-    $validator = Validator::make($request->all(), [
-        'jobs' => 'required|array|min:1',
-        'jobs.*.user_id' => 'required|numeric',
-        'jobs.*.title' => 'required|string|max:255',
-        'jobs.*.receiver_name' => 'nullable|string|max:255',
-        'jobs.*.description' => 'nullable|string',
-        'jobs.*.pickup_address' => 'required|string|max:255',
-        'jobs.*.pickup_lat' => 'nullable|numeric',
-        'jobs.*.pickup_lng' => 'nullable|numeric',
-        'jobs.*.dropoff_address' => 'required|string|max:255',
-        'jobs.*.dropoff_lat' => 'nullable|numeric',
-        'jobs.*.dropoff_lng' => 'nullable|numeric',
-        'jobs.*.mobility_type_needed' => 'nullable|string|max:255',
-        'jobs.*.price' => 'nullable|numeric',
-        'jobs.*.price_type' => 'nullable|in:fixed,negotiable',
-        'jobs.*.expires_at' => 'nullable|date',
-    ]);
-
-    if ($validator->fails()) {
-            return $this->validationError($validator->errors());
-        }          
-
-   // $userId = $request->user()->id; // or auth()->id()
-
-    $createdJobs = [];
-
-    DB::beginTransaction();
-
-    try {
-        foreach ($validated['jobs'] as $jobData) {
-            $job = Job::create([
-                'user_id'              => $jobData['user_id'],
-                'title'                 => $jobData['title'],
-                'receiver_name'         => $jobData['receiver_name'] ?? null,
-                'description'           => $jobData['description'] ?? null,
-                'pickup_address'        => $jobData['pickup_address'],
-                'pickup_lat'            => $jobData['pickup_lat'] ?? null,
-                'pickup_lng'            => $jobData['pickup_lng'] ?? null,
-                'dropoff_address'       => $jobData['dropoff_address'],
-                'dropoff_lat'           => $jobData['dropoff_lat'] ?? null,
-                'dropoff_lng'           => $jobData['dropoff_lng'] ?? null,
-                'mobility_type_needed'  => $jobData['mobility_type_needed'] ?? null,
-                'price'                 => $jobData['price'] ?? null,
-                'price_type'            => $jobData['price_type'] ?? 'fixed',
-                'status'                => 'open',
-                'posted_at'             => now(),
-                'expires_at'            => Carbon::now()->addMinutes(10),
-            ]);
-
-            $createdJobs[] = $job;
-        }
-
-        DB::commit();
-    } catch (\Throwable $e) {
-        DB::rollBack();
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to create jobs.',
-            'error'   => $e->getMessage(),
-        ], 500);
-    }
-
-    return response()->json([
-        'success' => true,
-        'message' => count($createdJobs) . ' job(s) created successfully.',
-        'data'    => $createdJobs,
-    ], 201);
-   }
-
+}
 
 
     public function show(Job $job): JsonResponse

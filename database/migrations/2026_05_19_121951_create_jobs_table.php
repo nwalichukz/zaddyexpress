@@ -14,22 +14,6 @@ return new class extends Migration
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->string('title');
-             $table->string('receiver_name')->nullable();
-            $table->text('description')->nullable();
-            $table->string('pickup_address');
-            $table->string('pickup_lat')->nullable();
-            $table->string('pickup_lng')->nullable();
-             $table->string('dropoff_lat')->nullable();
-            $table->string('dropoff_lng')->nullable();
-            $table->string('dropoff_address');
-            $table->string('mobility_type_needed')->nullable();
-            $table->string('price')->nullable();
-            $table->string('price_type')->default('fixed');//fixed, negotiable,
-             $table->string('status')->nullable(); //open, matched, in_progress, completed, cancelled
-            $table->timestamp('posted_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamp('delivered_at')->nullable();
             $table->timestamps();
         });
     }

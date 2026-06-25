@@ -95,7 +95,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('job-applications/{jobApplication}/withdraw', [JobApplicationController::class, 'withdraw']);
 
     Route::get('my-jobs/{user_id}', [JobController::class, 'myJobs']);
-    Route::post('job/create', [JobController::class, 'store']);
+    Route::post('job/create', [JobItemController::class, 'store']);
     Route::post('jobs', [JobController::class, 'store']);
     Route::put('jobs/{job}', [JobController::class, 'update']);
     Route::patch('jobs/{job}/status', [JobController::class, 'changeStatus']);
@@ -159,3 +159,4 @@ Route::middleware('auth:api')->prefix('admin')->group(function () {
     Route::delete('job-applications/{jobApplication}', [JobApplicationController::class, 'destroy']);
     Route::delete('jobs/{job}', [JobController::class, 'destroy']);
 });
+ 

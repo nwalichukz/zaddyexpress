@@ -51,6 +51,12 @@ class Job extends Model
     {
         return $this->hasMany(JobApplication::class);
     }
+
+
+    public function jobItem(): HasMany
+    {
+        return $this->hasMany(JobItem::class);
+    }
  
     public function acceptedApplication(): HasOne
     {
