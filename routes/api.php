@@ -89,6 +89,12 @@ Route::middleware('auth:api')->group(function () {
     Route::put('reviews/{review}', [ReviewController::class, 'update']);
     Route::delete('reviews/{review}', [ReviewController::class, 'destroy']);
 
+    // squadco.com
+Route::post('/squadco/virtual-account', [BillStackController::class, 'createStaticVirtualAccount']);
+Route::post('/squadco/webhook', [BillStackController::class, 'webhook']);
+
+
+
     Route::get('job-applications/mine', [JobApplicationController::class, 'myApplications']);
     Route::post('jobs/{job}/applications', [JobApplicationController::class, 'store']);
     Route::get('jobs/{job}/applications', [JobApplicationController::class, 'byJob']);
@@ -156,10 +162,6 @@ Route::middleware('auth:api')->prefix('admin')->group(function () {
     Route::delete('users/{id}', [UserController::class, 'delete']);
 
   
-  // squadco.com
-Route::post('/squadco/webhook', [BillStackController::class, 'webhook']);
-Route::post('/squadco/virtual-account', [BillStackController::class, 'createStaticVirtualAccount']);
-
 
     Route::get('riders', [RiderProfileController::class, 'index']);
     Route::get('all-riders', [RiderProfileController::class, 'index']);
