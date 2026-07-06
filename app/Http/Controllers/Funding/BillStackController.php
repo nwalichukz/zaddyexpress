@@ -17,17 +17,6 @@ class BillStackController extends Controller
      public static $baseUrl = "https://api-d.squadco.com";
 
 
-    private static function authorizationHeader(): string
-    {
-        $secret = (string) config('services.billstack.secret_key');
-
-        return str_starts_with($secret, 'Bearer ') ? $secret : 'Bearer '.$secret;
-    }
-
-    private static function baseUrl(): string
-    {
-        return (string) config('services.billstack.base_url');
-    }
 
 
 
@@ -40,19 +29,7 @@ class BillStackController extends Controller
      */
     public static function createStaticVirtualAccount(Request $request){
         return 12345;
-        /*$validation = Validator::make($request->all(),
-            [
-                'email' => 'required|exists:users,email',//|exists:users|email',
-                'first_name'=>'required',
-                'last_name'=>'required',
-                'mobile_no'=>'required|exists:users,mobile_no|min:11|max:12',
-
-            ]);
-
-        if($validation->fails()){
-            return $validation->errors();
-        }*/
-
+    
         if(!empty($request['first_name'])) {
             $full_name = $request['first_name'] . ' ' . $request['last_name'];
         }elseif(!empty($request['name'])){
@@ -103,59 +80,7 @@ class BillStackController extends Controller
     }
 
 
-    /**
-     * create a virtual account
-     * for event triggers
-     * @param $data
-     *
-     * @return object
-     */
-    public static function createStaticVirtualAccountEvent($request){
-       
-        if(!empty($request['first_name'])) {
-            $full_name = $request['first_name'] . ' ' . $request['last_name'];
-        }elseif(!empty($request['name'])){
-            $full_name = $request['name'];
-        }else{
-            $full_name     = "- Kuritr";
-        }
-        $ref = 'BSTA'.time().mt_rand(10000000, 9999999999);
-        $payload = [
-            "email" => $request['email'],
-            "firstName"=>$request['first_name'],
-            "lastName"=>$request['last_name'],
-            "phone" => $request['mobile_no'],
-            "reference"=>$ref,
-            "bank"=>"PALMPAY",
-        ];
-
-         $response = Http::withHeaders(['Content-Type' => 'application/json',
-                            'Authorization' => self::authorizationHeader()])
-                            ->post(
-                                self::baseUrl(),
-                                $payload
-                            );
-        // return $payload;
-        $user = User::where('email',$request['email'])->first();
-        if ($response['status'] == 'true') {
-            $data = [
-                "account_number"=>$response['data']['account'][0]['account_number'],
-                "bank_name"=>$response['data']['account'][0]['bank_name'],
-                "txt_ref"=>$ref,
-                "order_ref"=>$response['data']['reference'],
-                "email"=>$request['email'],
-                "user_id"=>$user->id,
-            ];
-
-            StaticVirtualAccountController::save($data);
-        }else{
-            /*return response()->json([
-                "status"=>"error",
-                "message"=>"Permanent virtual account number not generated successfully"
-            ]);*/
-        }
-    }
-
+    
 
 
     /**
