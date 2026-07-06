@@ -14,20 +14,15 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class BillStackController extends Controller
-{
+{    
+    public static $secretKey ="Bearer sk_64221fd9539d37d7e2a467ccd84465530583f892";
+
+     public static $baseUrl = "https://api-d.squadco.com";
     // Pulled from config/env instead of being hardcoded in source.
     // Add to your .env:
     //   SQUADCO_SECRET_KEY=sk_64221fd9539d37d7e2a467ccd84465530583f892
     //   SQUADCO_BASE_URL=https://api-d.squadco.com
-    public static function secretKey()
-    {
-        return 'Bearer ' . config('services.squadco.secret_key');
-    }
-
-    public static function baseUrl()
-    {
-        return config('services.squadco.base_url', 'https://api-d.squadco.com');
-    }
+   
 
     /**
      * Create a virtual account.
@@ -61,9 +56,9 @@ class BillStackController extends Controller
 
        return $response = Http::withHeaders([
                 'Content-Type'  => 'application/json',
-                'Authorization' => self::secretKey(),
+                'Authorization' => self::$secretKey,
             ])
-            ->post(self::baseUrl() . '/' . $url, $payload);
+            ->post(self::$baseUrl . '/' . $url, $payload);
 
         // Bail out early on transport/HTTP errors instead of assuming success.
         if (!$response->successful()) {
