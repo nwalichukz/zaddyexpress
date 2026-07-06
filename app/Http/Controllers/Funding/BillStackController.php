@@ -39,6 +39,7 @@ class BillStackController extends Controller
      * @return object
      */
     public static function createStaticVirtualAccount(Request $request){
+        return 12345;
         /*$validation = Validator::make($request->all(),
             [
                 'email' => 'required|exists:users,email',//|exists:users|email',
