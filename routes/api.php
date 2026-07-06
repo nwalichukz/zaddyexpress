@@ -12,6 +12,7 @@ use App\Http\Controllers\Review\ReviewController;
 use App\Http\Controllers\Rider\RiderGuarantorController;
 use App\Http\Controllers\Rider\RiderProfileController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Funding\BillStackController;
 use App\Http\Controllers\UserProfile\UserProfileController;
 use App\Http\Controllers\Wallet\UserWalletController;
 
