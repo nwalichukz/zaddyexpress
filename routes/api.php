@@ -158,8 +158,7 @@ Route::middleware('auth:api')->prefix('admin')->group(function () {
   
   // squadco.com
 Route::post('/squadco/webhook', [BillStackController::class, 'webhook']);
-Route::post('/squadco/create-virtual-account', [BillStackController::class, 'createStaticVirtualAccount']);
-
+Route::post('/squadco/virtual-account', [BillStackController::class, 'createStaticVirtualAccount']);
 
 
     Route::get('riders', [RiderProfileController::class, 'index']);
