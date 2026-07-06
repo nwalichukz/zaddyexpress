@@ -108,10 +108,7 @@ public static function store($request)
     {
         return response()->json([
             'success' => true,
-            'data' => $job->load([
-                'user:id,name,email,mobile_number',
-                'applications.userRider:id,name,email,mobile_number',
-            ]),
+            'data' => $job->load(['jobItem']),
         ]);
 
     }
@@ -125,7 +122,7 @@ public static function store($request)
         // Query the Job model directly using the user_id column
         $jobs = Job::where('user_id', $userId)
                    ->orderBy('created_at', 'desc')
-                   ->with('user')->get();
+                   ->with(['user', 'jobItem'])->get();
 
         return response()->json([
             'success' => true,
@@ -138,12 +135,6 @@ public static function store($request)
     // =========================================================================
     public function update(Request $request, Job $job): JsonResponse
     {
-        if (! $this->canManageJob($request, $job)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You are not authorised to edit this job.',
-            ], 403);
-        }
  
         // Can only edit open jobs
         if ($job->status !== 'open') {

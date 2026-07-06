@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
+             $table->string('status')->default('open'); //open, matched, in_progress, completed, cancelled
             $table->timestamps();
         });
     }

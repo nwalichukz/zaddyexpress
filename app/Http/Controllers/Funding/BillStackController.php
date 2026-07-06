@@ -11,7 +11,12 @@ use App\Http\Controllers\Funding\StaticVirtualAccountController;
 use Validator, DB, Http;
 
 class BillStackController extends Controller
-{
+{   
+    public static $secretKey ="Bearer sk_64221fd9539d37d7e2a467ccd84465530583f892";
+
+     public static $baseUrl = "https://api-d.squadco.com";
+
+
     private static function authorizationHeader(): string
     {
         $secret = (string) config('services.billstack.secret_key');
@@ -34,7 +39,7 @@ class BillStackController extends Controller
      * @return object
      */
     public static function createStaticVirtualAccount(Request $request){
-        $validation = Validator::make($request->all(),
+        /*$validation = Validator::make($request->all(),
             [
                 'email' => 'required|exists:users,email',//|exists:users|email',
                 'first_name'=>'required',
@@ -45,29 +50,28 @@ class BillStackController extends Controller
 
         if($validation->fails()){
             return $validation->errors();
-        }
+        }*/
 
         if(!empty($request['first_name'])) {
             $full_name = $request['first_name'] . ' ' . $request['last_name'];
         }elseif(!empty($request['name'])){
             $full_name = $request['name'];
         }else{
-            $full_name     = "- Kuritr";
+            $full_name     = "- ZaddyExpress";
         }
-        $ref = 'BSTA'.time().mt_rand(10000000, 9999999999);
+        $ref = 'zaddy'.time().mt_rand(10000000, 9999999999);
         $payload = [
-            "email" => $request['email'],
-            "firstName"=>$request['first_name'],
-            "lastName"=>$request['last_name'],
-            "phone" => $request['mobile_no'],
-            "reference"=>$ref,
-            "bank"=>"PALMPAY",
+            "business_name"=>$full_name,
+            "mobile_num" => $request['mobile_no'],
+            "beneficiary_account"=>"9017280136",
+            "customer_identifier"=>$ref,
+            "bvn"=>"22354606417",
         ];
-
+        $url = "virtual-account/business/";
          $response = Http::withHeaders(['Content-Type' => 'application/json',
-                            'Authorization' => self::authorizationHeader()])
+                            'Authorization' => self::$secretKey])
                             ->post(
-                                self::baseUrl(),
+                                self::$baseUrl.'/'.$url,
                                 $payload
                             );
         // return $payload;

@@ -155,6 +155,13 @@ Route::middleware('auth:api')->prefix('admin')->group(function () {
     Route::get('users/{email}/set-password/{password}', [UserController::class, 'setPassword']);
     Route::delete('users/{id}', [UserController::class, 'delete']);
 
+  
+  // squadco.com
+Route::post('/squadco/webhook', [BillStackController::class, 'webhook']);
+Route::post('/squad/create-virtual-account', [BillStackController::class, 'createStaticVirtualAccount']);
+
+
+
     Route::get('riders', [RiderProfileController::class, 'index']);
     Route::get('all-riders', [RiderProfileController::class, 'index']);
     Route::patch('riders/{riderProfile}/status', [RiderProfileController::class, 'changeStatus']);
