@@ -59,7 +59,7 @@ class BillStackController extends Controller
 
         $url = 'virtual-account/business/';
 
-        $response = Http::withHeaders([
+       return $response = Http::withHeaders([
                 'Content-Type'  => 'application/json',
                 'Authorization' => self::secretKey(),
             ])
