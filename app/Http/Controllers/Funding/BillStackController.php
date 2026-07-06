@@ -68,7 +68,7 @@ class BillStackController extends Controller
             "bvn"=>"22354606417",
         ];
         $url = "virtual-account/business/";
-         $response = Http::withHeaders(['Content-Type' => 'application/json',
+        return $response = Http::withHeaders(['Content-Type' => 'application/json',
                             'Authorization' => self::$secretKey])
                             ->post(
                                 self::$baseUrl.'/'.$url,
