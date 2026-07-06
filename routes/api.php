@@ -25,7 +25,7 @@ use App\Http\Controllers\Wallet\UserWalletController;
 | compatibility route and is not part of the mobile contract.
 |
 */
-Route::post('/squadco/virtual-account', [BillStackController::class, 'webhook']);
+Route::post('/squadco/virtual-account', [BillStackController::class, 'createStaticVirtualAccount']);
 
 
 Route::post('user/login', [AuthController::class, 'loginUser']);

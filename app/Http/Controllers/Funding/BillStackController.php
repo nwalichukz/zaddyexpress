@@ -177,6 +177,6 @@ class BillStackController extends Controller
             UserWalletController::credit($data);
         });
 
-        return response('', 200);
+        return response(200);
     }
 }
