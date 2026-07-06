@@ -30,7 +30,7 @@ class BillStackController extends Controller
     public static function createStaticVirtualAccount(Request $request){
         return 12345;
     
-        if(!empty($request['first_name'])) {
+       /* if(!empty($request['first_name'])) {
             $full_name = $request['first_name'] . ' ' . $request['last_name'];
         }elseif(!empty($request['name'])){
             $full_name = $request['name'];
@@ -76,7 +76,7 @@ class BillStackController extends Controller
                 "message"=>"Permanent virtual account number not generated successfully",
                 "account_details"=>null
             ]);
-        }
+        }*/
     }
 
 
