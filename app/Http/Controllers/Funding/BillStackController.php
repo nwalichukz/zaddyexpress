@@ -49,9 +49,8 @@ class BillStackController extends Controller
             'mobile_num'          => $request['mobile_no'],
             'beneficiary_account' => '9017280136',
             'customer_identifier' => $ref,
-            'bvn'                 => '2247271279',
-        ];
-
+            'bvn'                 => '22472751279'];
+ 
         $url = 'virtual-account/business/';
 
        return $response = Http::withHeaders([
