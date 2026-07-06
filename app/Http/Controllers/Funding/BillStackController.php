@@ -52,7 +52,7 @@ class BillStackController extends Controller
         $payload = [
             'business_name'       => $full_name,
             'mobile_num'          => $request['mobile_no'],
-            'beneficiary_account' => ""
+            'beneficiary_account' => "",
             'customer_identifier' => $ref,
             // BVN now comes from the request/authenticated user, never hardcoded.
             'bvn'                 => "",
