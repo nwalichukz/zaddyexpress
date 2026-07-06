@@ -91,7 +91,7 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('reviews/{review}', [ReviewController::class, 'destroy']);
 
     // squadco.com
-Route::post('/squadco/virtual-account', [BillStackController::class, 'createStaticVirtualAccount']);
+Route::post('/squadco/virtual-account', [BillStackController::class, 'webhook']);
 //  Route::post('/squadco/webhook', [BillStackController::class, 'webhook']);
 
 

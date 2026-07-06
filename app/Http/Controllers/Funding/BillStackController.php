@@ -28,7 +28,7 @@ class BillStackController extends Controller
      * @return object
      */
     public static function createStaticVirtualAccount(Request $request){
-        return 12345;
+                  return 12345;
     
        /* if(!empty($request['first_name'])) {
             $full_name = $request['first_name'] . ' ' . $request['last_name'];
@@ -90,7 +90,7 @@ class BillStackController extends Controller
     public function webhook(Request $request)
     {
          //This verifies the webhook is sent from Billstack
-              $secret_key = (string) config('services.billstack.secret_key');
+              $secret_key = "Bill_Stack-SEC-KEY-1f3c6fd0ea70df03e0e94e2e3cf42483";
              $md5_hash = md5($secret_key);
              if(request()->header('x-wiaxy-signature') == $md5_hash){
                  $verified = true;
@@ -103,7 +103,7 @@ class BillStackController extends Controller
             // $verified = true;
 
         // if it is a charge event, verify and confirm it is a successful transaction
-        if($verified === true) {
+        if($verified = true) {
 
                     // process for successful charge
                     DB::transaction(function () use ($request) {
@@ -129,15 +129,9 @@ class BillStackController extends Controller
                       
                     return response(200);
 
-               
-
-        }
-
-    
-
-      
 
     }
+    
 
 
 }
