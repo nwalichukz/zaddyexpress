@@ -37,21 +37,7 @@ class BillStackController extends Controller
      */
     public static function createStaticVirtualAccount(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email'      => 'required|email',
-            'mobile_no'  => 'required|string',
-            'bvn'        => 'required|digits:11',
-            'first_name' => 'nullable|string',
-            'last_name'  => 'nullable|string',
-            'name'       => 'nullable|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => $validator->errors()->first(),
-            ], 422);
-        }
+        
 
         if (!empty($request['first_name'])) {
             $full_name = $request['first_name'] . ' ' . $request['last_name'];
@@ -66,10 +52,10 @@ class BillStackController extends Controller
         $payload = [
             'business_name'       => $full_name,
             'mobile_num'          => $request['mobile_no'],
-            'beneficiary_account' => $request['beneficiary_account'] ?? config('services.squadco.default_beneficiary_account'),
+            'beneficiary_account' => ""
             'customer_identifier' => $ref,
             // BVN now comes from the request/authenticated user, never hardcoded.
-            'bvn'                 => $request['bvn'],
+            'bvn'                 => "",
         ];
 
         $url = 'virtual-account/business/';

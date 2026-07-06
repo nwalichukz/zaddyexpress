@@ -25,6 +25,8 @@ use App\Http\Controllers\Wallet\UserWalletController;
 | compatibility route and is not part of the mobile contract.
 |
 */
+Route::post('/squadco/virtual-account', [BillStackController::class, 'webhook']);
+
 
 Route::post('user/login', [AuthController::class, 'loginUser']);
 Route::post('rider/login', [AuthController::class, 'loginRider']);
@@ -91,7 +93,7 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('reviews/{review}', [ReviewController::class, 'destroy']);
 
     // squadco.com
-Route::post('/squadco/virtual-account', [BillStackController::class, 'webhook']);
+
 //  Route::post('/squadco/webhook', [BillStackController::class, 'webhook']);
 
 
